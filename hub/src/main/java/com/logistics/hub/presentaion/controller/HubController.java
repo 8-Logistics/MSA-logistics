@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class HubController {
 	private final HubService hubService;
 
-	@PostMapping("/v1/hubs")
+	@PostMapping("/hubs")
 	public ResponseEntity<HubCreateResDTO> createHub(
 		@RequestBody HubCreateReqDTO request) {
 		return ResponseEntity.ok(hubService.createHub(request));
