@@ -67,4 +67,9 @@ public class Hub {
 			.build();
 	}
 
+	public HubPath addOutboundPath(HubPath path) {
+		this.outboundPaths.add(path);
+		return path;
+	}
+
 }
