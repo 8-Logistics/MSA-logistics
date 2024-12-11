@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.logistics.hub.application.dto.HubCreateReqDTO;
+import com.logistics.hub.application.dto.HubUpdateReqDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -67,9 +68,29 @@ public class Hub {
 			.build();
 	}
 
+	public void update(HubUpdateReqDTO request) {
+		if (request.getName() != null) {
+			this.name = request.getName();
+		}
+		if (request.getAddress() != null) {
+			this.address = request.getAddress();
+		}
+		if (request.getLatitude() != null) {
+			this.latitude = request.getLatitude();
+		}
+		if (request.getLongitude() != null) {
+			this.longitude = request.getLongitude();
+		}
+		if (request.getSlackId() != null) {
+			this.slackId = request.getSlackId();
+		}
+		if (request.getManagerName() != null) {
+			this.managerName = request.getManagerName();
+		}
+	}
+
 	public HubPath addOutboundPath(HubPath path) {
 		this.outboundPaths.add(path);
 		return path;
 	}
-
 }
