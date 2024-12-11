@@ -2,13 +2,18 @@ package com.logistics.product.application.service;
 
 import com.logistics.product.application.dto.ProductReqDto;
 import com.logistics.product.application.dto.ProductResDto;
+import com.logistics.product.application.dto.ProductUpdateReqDto;
 import com.logistics.product.domain.entity.Product;
 import com.logistics.product.domain.repository.ProductRepository;
 import com.logistics.product.infrastucture.feign.HubFeignClient;
 import com.logistics.product.infrastucture.feign.VendorFeignClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +23,7 @@ public class ProductService {
     private final VendorFeignClient vendorFeignClient;
     private final HubFeignClient hubFeignClient;
     @Transactional
-    public ProductResDto createProduct(ProductReqDto request) {
+    public UUID createProduct(ProductReqDto request) {
 
         Product product = ProductReqDto.toProduct(request);
 
@@ -32,6 +37,18 @@ public class ProductService {
 
         //product.setCreatedBy(userName);
 
-        return ProductResDto.from(productRepository.save(product));
+        ProductResDto.from(productRepository.save(product));
+        return product.getProductId();
     }
+
+    @Transactional
+    public UUID updateProduct(UUID productId, ProductUpdateReqDto request) {
+        Product product = productRepository.findByProductIdAndIsDeleteFalse(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        product.updateProduct(request.getName(), request.getStock(), request.getDescription(), request.getPrice());
+        return productId;
+    }
+
+
 }

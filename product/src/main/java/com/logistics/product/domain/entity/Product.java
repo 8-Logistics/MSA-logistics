@@ -45,5 +45,11 @@ public class Product extends BaseEntity{
         this.isDeleted = true;
     }
 
+    public void updateProduct(String name, Long stock, String description, BigDecimal price) {
+        this.name = name;
+        this.stock = stock;
+        this.description = description;
+        this.price = price;
+    }
 
 }
