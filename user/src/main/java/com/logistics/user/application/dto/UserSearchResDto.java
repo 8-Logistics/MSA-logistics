@@ -1,12 +1,10 @@
 package com.logistics.user.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.logistics.user.domain.entity.User;
+import lombok.*;
 
 @Getter
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSearchResDto {
@@ -17,5 +15,18 @@ public class UserSearchResDto {
     private String slackId;
     private String name;
     private String role;
+    private String userStatus;
+
+    public static UserSearchResDto toUserResponse(User user){
+        return UserSearchResDto.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .slackId(user.getSlackId())
+                .name(user.getName())
+                .role(user.getRole().toString())
+                .userStatus(user.getUserStatus().toString())
+                .build();
+    }
 
 }
