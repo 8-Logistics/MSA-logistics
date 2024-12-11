@@ -42,9 +42,24 @@ public class ProductService {
     }
 
     @Transactional
-    public UUID updateProduct(UUID productId, ProductUpdateReqDto request) {
+    public UUID updateProduct(UUID productId, ProductUpdateReqDto request, String role) {
+
         Product product = productRepository.findByProductIdAndIsDeleteFalse(productId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        // 사용자가 허브 담당자라면 hubId와 productId가 속한 hubId가 같은지 확인
+        if(role.equals("HUB_Manager")) {
+            if(!request.getHubId().equals(product.getHubId())) {
+                throw new IllegalArgumentException("해당 허브에 속한 상품이 아닙니다.");
+            }
+        }
+
+        // 사용자가 업체 담당자라면 vendorId와 productId가 속한 vendorId가 같은지 확인
+        if(role.equals("VENDOR_Manager")) {
+            if(!request.getVendorId().equals(product.getVendorId())) {
+                throw new IllegalArgumentException("해당 업체에 속한 상품이 아닙니다.");
+            }
+        }
 
         product.updateProduct(request.getName(), request.getStock(), request.getDescription(), request.getPrice());
         return productId;

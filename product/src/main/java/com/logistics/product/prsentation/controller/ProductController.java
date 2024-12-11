@@ -28,7 +28,8 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('ROLE_MASTER_ADMIN', 'ROLE_HUB_ADMIN', 'ROLE_VENDOR_ADMIN')")
     @PutMapping("/products/{productId}")
     public ApiResponse<UUID> updateProduct(@PathVariable UUID productId, @RequestBody ProductUpdateReqDto request) {
-        UUID updateProductId = productService.updateProduct(productId, request);
+        String role = "HUB_ADMIN";
+        UUID updateProductId = productService.updateProduct(productId, request, role);
         return ApiResponse.success("상품이 수정되었습니다.",updateProductId);
     }
 
