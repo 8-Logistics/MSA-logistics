@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -39,10 +40,13 @@ public class Product extends BaseEntity{
     private String description;
 
     @Builder.Default
-    private boolean isDeleted = false;
+    @Column(name = "is_delete")
+    private boolean isDelete = false;
 
-    public void softDelete() {
-        this.isDeleted = true;
+    public void softDelete(String userId) {
+        this.isDelete = true;
+        this.deletedBy = userId;
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void updateProduct(String name, Long stock, String description, BigDecimal price) {

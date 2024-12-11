@@ -11,4 +11,6 @@ public interface HubFeignClient {
     @GetMapping("/api/vi/hubs/{hubId}")
     public boolean checkHub(@PathVariable("hubId") UUID hubId);
 
+    @GetMapping("/api/vi/hubs/{userId}")
+    public UUID getUserHubId(String userId);
 }

@@ -17,6 +17,4 @@ public class ProductUpdateReqDto {
     private Long stock;
     private String description;
     private BigDecimal price;
-    private UUID hubId;
-    private UUID vendorId;
 }

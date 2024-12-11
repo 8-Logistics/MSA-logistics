@@ -29,8 +29,18 @@ public class ProductController {
     @PutMapping("/products/{productId}")
     public ApiResponse<UUID> updateProduct(@PathVariable UUID productId, @RequestBody ProductUpdateReqDto request) {
         String role = "HUB_ADMIN";
-        UUID updateProductId = productService.updateProduct(productId, request, role);
+        String userId = "123";
+        UUID updateProductId = productService.updateProduct(productId, request, userId, role);
         return ApiResponse.success("상품이 수정되었습니다.",updateProductId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_MASTER_ADMIN', 'ROLE_HUB_ADMIN')")
+    @DeleteMapping("/api/products/{productId}")
+    public ApiResponse deleteProduct(@PathVariable("productId") UUID productId) {
+        String role = "HUB_ADMIN";
+        String userId = "123";
+        productService.deleteProduct(productId, userId, role);
+        return ApiResponse.success("상품이 삭제되었습니다.");
     }
 
 

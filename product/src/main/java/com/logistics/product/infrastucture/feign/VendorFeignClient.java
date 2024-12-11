@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface VendorFeignClient {
     @GetMapping("api/vi/vendor/{vendorId}")
     public boolean checkVendor(@PathVariable UUID vendorId);
+
+    @GetMapping("api/vi/vendor/{userId}")
+    public UUID getUserVendorId(String userId);
 }
