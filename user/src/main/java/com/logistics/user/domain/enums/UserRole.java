@@ -17,12 +17,21 @@ public enum UserRole {
         this.authority = authority;
     }
 
+    public UserRole getRole(String roleName) {
+        for(UserRole role : values()) {
+            if(role.authority.equals(roleName)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("Unexpected value: " + roleName);
+    }
+
     public static class Authority {
 
-        public static final String NORMAL = "ROLE_NORMAL";
-        public static final String DELIVERY_MANAGER = "ROLE_DELIVERY_MANAGER";
-        public static final String VENDOR_MANAGER = "ROLE_VENDOR_MANAGER";
-        public static final String HUB_MANAGER = "ROLE_HUB_MANAGER";
-        public static final String MASTER = "ROLE_MASTER";
+        public static final String NORMAL = "NORMAL";
+        public static final String DELIVERY_MANAGER = "DELIVERY_MANAGER";
+        public static final String VENDOR_MANAGER = "VENDOR_MANAGER";
+        public static final String HUB_MANAGER = "HUB_MANAGER";
+        public static final String MASTER = "MASTER";
     }
 }
