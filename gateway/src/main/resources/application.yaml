@@ -9,35 +9,26 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/users/**
-            - Path=/auth/**
-            - Path=/delivery-manager/**
         - id: vendor-service
           uri: lb://vendor-service
           predicates:
-            - Path=/vendors/**
+            - Path=/api/v1/vendors/**
         - id: product-service
           uri: lb://product-service
           predicates:
-            - Path=/products/**
+            - Path=/api/v1/products/**
         - id: order-service  # 라우트 식별자
           uri: lb://order-service
           predicates:
-            - Path=/orders/**
-            - Path=/noties/**
+            - Path=/api/v1/orders/**, /api/v1/noties/**
         - id: hub-service  # 라우트 식별자
           uri: lb://hub-service
           predicates:
-            - Path=/hubs/**
-            - Path=/hubPaths/**
+            - Path=/api/v1/hubs/**, /api/v1/hubPaths/**
         - id: delivery-service  # 라우트 식별자
           uri: lb://delivery-service
           predicates:
-            - Path=/deliveries/**
-            - Path=/deliveryPaths/**
+            - Path=/api/v1/deliveries/**, /api/v1/deliveryPaths/**
       discovery:
         locator:
           enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
@@ -51,3 +42,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/  # Eureka 서버의 URL을 지정
+
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: DEBUG
+#    com.netflix.discovery: DEBUG
