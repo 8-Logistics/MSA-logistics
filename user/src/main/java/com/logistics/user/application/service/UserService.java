@@ -6,4 +6,5 @@ public interface UserService {
 
     UserSearchResDto findUser(Long userId);
 
+    void deleteUser(Long userId);
 }
