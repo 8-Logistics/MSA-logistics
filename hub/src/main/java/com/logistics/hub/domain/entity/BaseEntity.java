@@ -1,4 +1,4 @@
-package com.logistics.hub.domain.common;
+package com.logistics.hub.domain.entity;
 
 import java.time.LocalDateTime;
 
@@ -12,34 +12,47 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseTimeEntity {
+public abstract class BaseEntity {
+
 	@CreatedDate
-	@Column(name = "created_at", updatable = false)
+	@Column(updatable = false, name = "created_at")
 	private LocalDateTime createdAt;
+
+	@CreatedBy
+	@Column(updatable = false, name = "created_by")
+	private String createdBy;
 
 	@LastModifiedDate
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	@Setter
-	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt;
-
-	@Setter
-	@CreatedBy
-	@Column(name = "created_by", updatable = false)
-	private String createdBy;
-
 	@LastModifiedBy
 	@Column(name = "updated_by")
 	private String updatedBy;
 
-	@Setter
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
+
 	@Column(name = "deleted_by")
 	private String deletedBy;
+
+	@Column(name = "is_delete", nullable = false)
+	private boolean isDelete = false;
+
+	public void setDeletedBy(String deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	public void setDeletedAt(LocalDateTime deletedAt) {
+		this.deletedAt = deletedAt;
+	}
+
+	public void setIsDeleted() {
+		this.isDelete = true;
+	}
+
 }

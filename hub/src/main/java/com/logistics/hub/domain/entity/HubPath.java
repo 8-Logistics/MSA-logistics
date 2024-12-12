@@ -18,12 +18,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "hub_path", schema = "hub_service")
+@Table(name = "p_hub_path")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HubPath {
+public class HubPath extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "path_id")
@@ -43,15 +43,11 @@ public class HubPath {
 	@Column(name = "estimated_time", nullable = false)
 	private LocalDateTime estimatedTime;
 
-	@Column(name = "is_delete", nullable = false)
-	private Boolean isDelete;
-
 	public HubPath(Hub sourceHub, Hub destinationHub, Double distance, LocalDateTime estimatedTime) {
 		this.sourceHub = sourceHub;
 		this.destinationHub = destinationHub;
 		this.distance = distance;
 		this.estimatedTime = estimatedTime;
-		this.isDelete = false;
 	}
 
 }

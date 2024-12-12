@@ -1,5 +1,6 @@
 package com.logistics.hub.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +23,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "hub", schema = "hub_service")
+@Table(name = "p_hub")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hub {
+public class Hub extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "hub_id")
@@ -45,14 +46,8 @@ public class Hub {
 	@Column(name = "longitude", nullable = false)
 	private Double longitude;
 
-	@Column(name = "slack_id")
-	private String slackId;
-
-	@Column(name = "manager_name")
-	private String managerName;
-
-	@Column(name = "is_delete", nullable = false)
-	private Boolean isDelete;
+	@Column(name = "manager_id")
+	private String managerId;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "source_hub_id")
@@ -64,7 +59,6 @@ public class Hub {
 			.address(dto.getAddress())
 			.latitude(dto.getLatitude())
 			.longitude(dto.getLongitude())
-			.isDelete(false)
 			.build();
 	}
 
@@ -81,16 +75,20 @@ public class Hub {
 		if (request.getLongitude() != null) {
 			this.longitude = request.getLongitude();
 		}
-		if (request.getSlackId() != null) {
-			this.slackId = request.getSlackId();
+		if (request.getManagerId() != null) {
+			this.managerId = request.getManagerId();
 		}
-		if (request.getManagerName() != null) {
-			this.managerName = request.getManagerName();
-		}
+	}
+
+	public void delete(String userId) {
+		this.setDeletedBy(userId);
+		this.setDeletedAt(LocalDateTime.now());
+		this.setIsDeleted();
 	}
 
 	public HubPath addOutboundPath(HubPath path) {
 		this.outboundPaths.add(path);
 		return path;
 	}
+
 }

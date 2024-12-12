@@ -3,46 +3,51 @@ package com.logistics.hub.infrastructure.auditing;
 import java.util.Optional;
 
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.logistics.hub.application.service.CustomPrincipal;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class AuditorAwareImpl implements AuditorAware<String> {
 
-	// private final HttpServletRequest request;
-	//
-	// @Value("${JWT_SECRET_KEY}")
-	// private String jwtSecretKey;
-	//
-	// public AuditorAwareImpl(HttpServletRequest request) {
-	// 	this.request = request;
-	// }
-	//
+	private final HttpServletRequest request;
+
 	@Override
 	public Optional<String> getCurrentAuditor() {
-		// 	// Authorization 헤더에서 JWT 토큰 추출
-		// 	String token = request.getHeader("Authorization");
-		// 	if (token == null || !token.startsWith("Bearer ")) {
-		// 		return Optional.empty();
-		// 	}
-		//
-		// 	// "Bearer " 부분 제거
-		// 	token = token.substring(7);
-		//
-		// 	// JWT 토큰 파싱
-		// 	try {
-		// 		Claims claims = Jwts.parser()
-		// 			.setSigningKey(jwtSecretKey)
-		// 			.build()
-		// 			.parseClaimsJws(token)
-		// 			.getBody();
-		//
-		// 		// payload의 사용자 ID 추출
-		// 		String userId = claims.get("X-User-Id", String.class);
-		// 		return Optional.ofNullable(userId).or(() -> Optional.of("anonymous"));
-		// 	} catch (Exception e) {
-		// 		return Optional.empty();
-		// 	}
-		return Optional.of("mock user");
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null
+			|| !authentication.isAuthenticated()
+			|| !(authentication.getPrincipal() instanceof CustomPrincipal)) {
+
+			return Optional.empty();
+		}
+
+		CustomPrincipal principal = (CustomPrincipal)authentication.getPrincipal();
+
+		// 로그인한 사용자의 ID Masking 처리
+		return Optional.of(userNameMasking(principal.getUserId()));
+	}
+
+	// 그냥 마스킹 한 느낌만..
+	private String userNameMasking(String username) {
+
+		StringBuilder sb = new StringBuilder(username);
+		int halflength = sb.length() / 2;
+
+		if (username.length() < 6) {
+			sb.replace(halflength - 1, halflength + 1, "**");
+		} else {
+			sb.replace(halflength - 1, halflength + 2, "***");
+		}
+
+		return sb.toString();
 	}
 
 }
