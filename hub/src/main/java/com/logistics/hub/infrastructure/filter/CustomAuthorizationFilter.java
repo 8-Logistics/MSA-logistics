@@ -1,6 +1,5 @@
 package com.logistics.hub.infrastructure.filter;
 
-
 import static com.logistics.hub.application.service.CustomPrincipal.*;
 
 import java.io.IOException;
@@ -25,40 +24,40 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+		throws ServletException, IOException {
 
-        log.info("path : {}", request.getRequestURI());
+		log.info("path : {}", request.getRequestURI());
 
-        // TODO 이거 안넣으셔도 됩니다.
-        // auth 요청에 대해서는 인증 X
-        if (request.getRequestURI().matches("/api/v1/auth/.*")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+		// TODO 이거 안넣으셔도 됩니다.
+		// auth 요청에 대해서는 인증 X
+		if (request.getRequestURI().matches("/api/v1/auth/.*")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-        // 헤더에서 사용자 정보 추출
-        String userId = request.getHeader("X-User-Id");
-        String role = request.getHeader("X-Role");
+		// 헤더에서 사용자 정보 추출
+		String userId = request.getHeader("X-User-Id");
+		String role = request.getHeader("X-Role");
 
-        // 사용자 정보가 없으면 인증 실패 처리
-        if (userId == null || role == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
+		// 사용자 정보가 없으면 인증 실패 처리
+		if (userId == null || role == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
 
-        CustomPrincipal principal = createPrinciple(userId, role);
+		CustomPrincipal principal = createPrinciple(userId, role);
 
-        // 인증 정보 설정
-        List<SimpleGrantedAuthority> authorities = Arrays.stream(role.split(","))
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+		// 인증 정보 설정
+		List<SimpleGrantedAuthority> authorities = Arrays.stream(role.split(","))
+			.map(SimpleGrantedAuthority::new)
+			.toList();
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(principal, null, authorities)
-        );
+		SecurityContextHolder.getContext().setAuthentication(
+			new UsernamePasswordAuthenticationToken(principal, null, authorities)
+		);
 
-        filterChain.doFilter(request, response);
-    }
+		filterChain.doFilter(request, response);
+	}
 }

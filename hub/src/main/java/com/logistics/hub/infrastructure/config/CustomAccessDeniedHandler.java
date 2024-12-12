@@ -21,30 +21,29 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final String ROLE_PREFIX = "ROLE_";
+	private final String ROLE_PREFIX = "ROLE_";
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-                       AccessDeniedException ex)
-            throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response,
+		AccessDeniedException ex)
+		throws IOException {
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String authorities = "";
+		if (auth != null) {
+			authorities = auth.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.joining(", "))
+				.replace(ROLE_PREFIX, "");
+		}
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String authorities = "";
-        if (auth != null) {
-            authorities = auth.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.joining(", "))
-                    .replace(ROLE_PREFIX, "");
-        }
+		// TODO 추후에 바꿀 것.
 
-        // TODO 추후에 바꿀 것.
+		String commonResponse =
+			"권한이 없습니다. 현재 사용자 권한: " + authorities;
 
-        String commonResponse =
-                "권한이 없습니다. 현재 사용자 권한: " + authorities;
-
-        new ObjectMapper().writeValue(response.getOutputStream(), commonResponse);
-    }
+		new ObjectMapper().writeValue(response.getOutputStream(), commonResponse);
+	}
 }
