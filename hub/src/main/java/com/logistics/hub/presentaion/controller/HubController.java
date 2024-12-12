@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubCreateResDTO;
+import com.logistics.hub.application.dto.HubReadResDto;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
 import com.logistics.hub.application.service.CustomPrincipal;
 import com.logistics.hub.application.service.HubService;
+import com.logistics.hub.domain.entity.Hub;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,6 +63,12 @@ public class HubController {
 		@PathVariable(name = "hubId") UUID hubId) {
 		hubService.deleteHub(hubId, customPrincipal.getUserId());
 		return ResponseEntity.ok("Hub successfully deleted");
+	}
+
+	@GetMapping("/hubs/{hubId}")
+	public ResponseEntity<HubReadResDto> getHub(
+		@PathVariable(name = "hubId") UUID hubId) {
+		return ResponseEntity.ok(HubReadResDto.of(hubService.getHub(hubId)));
 	}
 
 }
