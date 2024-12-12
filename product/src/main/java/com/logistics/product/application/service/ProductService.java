@@ -5,10 +5,9 @@ import com.logistics.product.application.dto.ProductResDto;
 import com.logistics.product.application.dto.ProductUpdateReqDto;
 import com.logistics.product.domain.entity.Product;
 import com.logistics.product.domain.repository.ProductRepository;
-import com.logistics.product.infrastucture.feign.HubFeignClient;
-import com.logistics.product.infrastucture.feign.VendorFeignClient;
+import com.logistics.product.infrastructure.feign.HubFeignClient;
+import com.logistics.product.infrastructure.feign.VendorFeignClient;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +68,7 @@ public class ProductService {
         return productId;
     }
 
-
+    @Transactional
     public void deleteProduct(UUID productId, String userId, String role) {
 
         Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
