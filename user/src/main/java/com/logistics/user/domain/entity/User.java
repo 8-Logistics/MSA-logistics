@@ -46,17 +46,6 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
-    // 여기는 무조건 Eager로 하는게 맞지 않는데 어떻게 해야되지
-//    @OneToOne(mappedBy = "user")
-//    private DeliveryManager deliveryManager;
-
-    @PrePersist
-    public void setCreatedByFromTemp() {
-        if (this.getCreatedBy() == null) {
-            this.setCreatedBy(this.username);
-            this.setUpdatedBy(this.username);
-        }
-    }
 
     public static User create(UserSignUpReqDto request){
         User user = User.builder()
@@ -69,7 +58,6 @@ public class User extends BaseEntity{
                 .userStatus(UserStatus.NONE)
                 .build();
 
-        user.setCreatedBy(request.getUsername());
         return user;
     }
 

@@ -41,13 +41,6 @@ public abstract class BaseEntity {
     @Column(name= "is_delete",nullable = false)
     private boolean isDelete = false;
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
 
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
