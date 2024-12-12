@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.logistics.hub.application.dto.HubCreateReqDTO;
@@ -22,7 +22,6 @@ import com.logistics.hub.application.service.CustomPrincipal;
 import com.logistics.hub.application.service.HubService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +42,15 @@ public class HubController {
 		@PathVariable(name = "hubId") UUID hubId,
 		@RequestBody HubUpdateReqDTO request) {
 		return ResponseEntity.ok(hubService.updateHub(request, hubId));
+	}
+
+	@PreAuthorize("hasAnyAuthority('MASTER')")
+	@PutMapping("/hubs/{hubId}/manager")
+	public ResponseEntity<String> assignHubManager(
+		@PathVariable UUID hubId,
+		@RequestParam String userId) {
+		hubService.assignHubManager(hubId, userId);
+		return ResponseEntity.ok("Assigned manager to hub Successful");
 	}
 
 	@PreAuthorize("hasAnyAuthority('MASTER')")

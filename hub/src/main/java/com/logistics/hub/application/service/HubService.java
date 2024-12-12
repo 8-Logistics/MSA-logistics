@@ -14,6 +14,7 @@ import com.logistics.hub.domain.entity.Hub;
 import com.logistics.hub.domain.entity.HubPath;
 import com.logistics.hub.domain.repository.HubRepository;
 
+import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HubService {
 	private final HubRepository hubRepository;
+	private final UserService userService;
 
 	public HubCreateResDTO createHub(HubCreateReqDTO request) {
 		Hub hub = Hub.create(request);
@@ -36,7 +38,19 @@ public class HubService {
 	}
 
 	@Transactional
-	public void deleteHub(UUID hubId,String userId) {
+	public void assignHubManager(UUID hubId, String userId) {
+		Hub hub = getHub(hubId);
+		String userRole = "HUB_MANAGER";
+		try {
+			userService.updateUserRole(userId, userRole);
+		} catch (FeignException e) {
+			throw new IllegalArgumentException("Failed to update user role", e);
+		}
+		hub.assignHubManager(userId);
+	}
+
+	@Transactional
+	public void deleteHub(UUID hubId, String userId) {
 		Hub hub = getHub(hubId);
 		if (hub.isDelete()) {
 			throw new IllegalStateException("This hub is already deleted.");
