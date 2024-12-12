@@ -1,5 +1,6 @@
 package com.logistics.user.domain.entity;
 
+import com.logistics.user.infrastructure.auditing.SoftDeleteEntityListener;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, SoftDeleteEntityListener.class})
 public abstract class BaseEntity {
 
     @CreatedDate
@@ -41,6 +42,9 @@ public abstract class BaseEntity {
     @Column(name= "is_delete",nullable = false)
     private boolean isDelete = false;
 
+    public void setIsDelete() {
+        this.isDelete = true;
+    }
 
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;

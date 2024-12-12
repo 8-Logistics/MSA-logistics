@@ -30,7 +30,7 @@ public class SecurityAuditorAware implements AuditorAware<String> {
             // TODO 이런 방식은 괜찮은지?
             String username = (String) request.getAttribute("username");
 
-            return Optional.of(username);
+            return Optional.of(userNameMasking(username));
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -22,4 +22,16 @@ public class UserServiceImpl implements UserService {
 
         return UserSearchResDto.toUserResponse(user);
     }
+
+    @Transactional
+    @Override
+    public void deleteUser(Long userId) {
+
+        User user = userRepository.findByIdAndIsDeleteFalse(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
+
+        user.setIsDelete();
+    }
+
+
 }
