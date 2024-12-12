@@ -29,11 +29,19 @@ public class HubService {
 	}
 
 	@Transactional
-	public HubUpdateResDTO updateHub(HubUpdateReqDTO request, UUID hubId, String userRole) {
-		//to do : userRole 마스터 검증
+	public HubUpdateResDTO updateHub(HubUpdateReqDTO request, UUID hubId) {
 		Hub hub = getHub(hubId);
 		hub.update(request);
 		return HubUpdateResDTO.of(hub);
+	}
+
+	@Transactional
+	public void deleteHub(UUID hubId,String userId) {
+		Hub hub = getHub(hubId);
+		if (hub.isDelete()) {
+			throw new IllegalStateException("This hub is already deleted.");
+		}
+		hub.delete(userId);
 	}
 
 	public HubPathCreateResDTO createHubPath(HubPathCreateReqDTO request, UUID sourceHubId) {

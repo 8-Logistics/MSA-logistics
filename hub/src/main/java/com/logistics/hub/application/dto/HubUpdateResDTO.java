@@ -20,8 +20,6 @@ public class HubUpdateResDTO {
 	private String address;
 	private Double latitude;
 	private Double longitude;
-	private String slackId;
-	private String managerName;
 	private LocalDateTime updatedAt;
 
 	public static HubUpdateResDTO of(Hub hub) {
@@ -31,9 +29,7 @@ public class HubUpdateResDTO {
 			.address(hub.getAddress())
 			.latitude(hub.getLatitude())
 			.longitude(hub.getLongitude())
-			.slackId(hub.getSlackId())
-			.managerName(hub.getManagerName())
-			.updatedAt(LocalDateTime.now())
+			.updatedAt(hub.getUpdatedAt())
 			.build();
 	}
 }

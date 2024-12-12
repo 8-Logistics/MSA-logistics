@@ -14,6 +14,4 @@ public class HubUpdateReqDTO {
 	private String address;
 	private Double latitude;
 	private Double longitude;
-	private String slackId;
-	private String managerName;
 }
