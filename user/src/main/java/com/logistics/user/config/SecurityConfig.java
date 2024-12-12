@@ -66,7 +66,7 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll() // TODO 이거 안넣으셔도 됩니다.
                         .requestMatchers(SWAGGER.toArray(new String[0])).permitAll()
                         .anyRequest().authenticated()
         );

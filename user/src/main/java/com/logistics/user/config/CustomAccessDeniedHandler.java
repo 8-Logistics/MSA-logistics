@@ -38,6 +38,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                     .replace(ROLE_PREFIX, "");
         }
 
+        // TODO 추후에 바꿀 것.
+
         String commonResponse =
                 "권한이 없습니다. 현재 사용자 권한: " + authorities;
 

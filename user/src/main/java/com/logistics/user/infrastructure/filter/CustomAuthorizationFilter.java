@@ -28,6 +28,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         log.info("path : {}", request.getRequestURI());
 
+        // TODO 이거 안넣으셔도 됩니다.
         // auth 요청에 대해서는 인증 X
         if (request.getRequestURI().matches("/api/v1/auth/.*")) {
             filterChain.doFilter(request, response);
