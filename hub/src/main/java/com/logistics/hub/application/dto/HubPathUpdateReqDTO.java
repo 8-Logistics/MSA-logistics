@@ -1,7 +1,6 @@
 package com.logistics.hub.application.dto;
 
 import java.time.LocalTime;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HubPathCreateReqDTO {
-	private UUID destinationHubId;
+public class HubPathUpdateReqDTO {
 	private Double distance;
 	private LocalTime estimatedTime;
-
 }

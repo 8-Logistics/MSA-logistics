@@ -8,6 +8,8 @@ import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubCreateResDTO;
 import com.logistics.hub.application.dto.HubPathCreateReqDTO;
 import com.logistics.hub.application.dto.HubPathCreateResDTO;
+import com.logistics.hub.application.dto.HubPathUpdateReqDTO;
+import com.logistics.hub.application.dto.HubPathUpdateResDTO;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
 import com.logistics.hub.domain.entity.Hub;
@@ -17,7 +19,9 @@ import com.logistics.hub.domain.repository.HubRepository;
 import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HubService {
@@ -52,30 +56,47 @@ public class HubService {
 	@Transactional
 	public void deleteHub(UUID hubId, String userId) {
 		Hub hub = getHub(hubId);
-		if (hub.isDelete()) {
-			throw new IllegalStateException("This hub is already deleted.");
-		}
 		hub.delete(userId);
 	}
 
+	@Transactional
 	public HubPathCreateResDTO createHubPath(HubPathCreateReqDTO request, UUID sourceHubId) {
 		Hub sourceHub = getHub(sourceHubId);
 		Hub destinationHub = getHub(request.getDestinationHubId());
 		validateSourceAndDestination(sourceHub, destinationHub);
-		HubPath newPath = new HubPath(sourceHub, destinationHub, request.getDistance(), request.getEstimatedTime());
+		HubPath newPath = new HubPath(UUID.randomUUID(), sourceHub, destinationHub, request.getDistance(),
+			request.getEstimatedTime());
 		HubPath path = sourceHub.addOutboundPath(newPath);
 		hubRepository.save(sourceHub);
-		return HubPathCreateResDTO.of(path);
+		return HubPathCreateResDTO.of(newPath);
+	}
+
+	@Transactional
+	public HubPathUpdateResDTO updateHubPath(HubPathUpdateReqDTO request, UUID hubId, UUID pathId) {
+		Hub sourceHub = getHub(hubId);
+		HubPath path = sourceHub.updateOutboundPath(pathId, request.getDistance(), request.getEstimatedTime());
+		return HubPathUpdateResDTO.of(path);
+	}
+
+	@Transactional
+	public void deleteHubPath(UUID hubId, UUID pathId, String userId) {
+		Hub hub = getHub(hubId);
+		HubPath hubPath = hub.findOutboundPathById(pathId);
+		hub.removeOutboundPath(hubPath, userId);
 	}
 
 	public Hub getHub(UUID id) {
-		return hubRepository.findById(id)
+		return hubRepository.findById(id).filter(hub -> !hub.isDelete())
 			.orElseThrow(() -> new IllegalArgumentException("Hub not found."));
 	}
 
-	private void validateSourceAndDestination(Hub sourceHub, Hub destinationHub) {
+	public void validateSourceAndDestination(Hub sourceHub, Hub destinationHub) {
 		if (sourceHub.equals(destinationHub)) {
 			throw new IllegalArgumentException("Source hub and destination hub cannot be the same.");
+		} else if (sourceHub.getOutboundPaths().stream()
+			.anyMatch(hubPath -> hubPath.getDestinationHub().equals(destinationHub))) {
+			throw new IllegalArgumentException("This hubPath is already exist.");
 		}
 	}
+
 }

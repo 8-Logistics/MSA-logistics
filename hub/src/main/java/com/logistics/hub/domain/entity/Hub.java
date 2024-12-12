@@ -1,6 +1,7 @@
 package com.logistics.hub.domain.entity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -8,9 +9,9 @@ import java.util.UUID;
 import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,7 +50,7 @@ public class Hub extends BaseEntity {
 	@Column(name = "manager_id")
 	private String managerId;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "source_hub_id")
 	private List<HubPath> outboundPaths = new ArrayList<>();
 
@@ -75,9 +76,10 @@ public class Hub extends BaseEntity {
 		if (request.getLongitude() != null) {
 			this.longitude = request.getLongitude();
 		}
-		if (request.getManagerId() != null) {
-			this.managerId = request.getManagerId();
-		}
+	}
+
+	public void assignHubManager(String userId) {
+		this.managerId = userId;
 	}
 
 	public void delete(String userId) {
@@ -91,4 +93,22 @@ public class Hub extends BaseEntity {
 		return path;
 	}
 
+	public HubPath updateOutboundPath(UUID pathId, Double newDistance, LocalTime newEstimatedTime) {
+		HubPath path = findOutboundPathById(pathId);
+		path.updatePath(newDistance, newEstimatedTime);
+		return path;
+	}
+
+	public void removeOutboundPath(HubPath path, String userId) {
+		// this.outboundPaths.remove(path);
+		path.delete(userId);
+
+	}
+
+	public HubPath findOutboundPathById(UUID pathId) {
+		return this.outboundPaths.stream()
+			.filter(path -> path.getId().equals(pathId) && !path.isDelete())
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("HubPath not found with id: " + pathId));
+	}
 }

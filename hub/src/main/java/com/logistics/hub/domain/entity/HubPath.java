@@ -1,6 +1,7 @@
 package com.logistics.hub.domain.entity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ public class HubPath extends BaseEntity {
 	private UUID id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "source_hub_id", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "source_hub_id", nullable = false)
 	private Hub sourceHub;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -41,13 +42,27 @@ public class HubPath extends BaseEntity {
 	private Double distance;
 
 	@Column(name = "estimated_time", nullable = false)
-	private LocalDateTime estimatedTime;
+	private LocalTime estimatedTime;
 
-	public HubPath(Hub sourceHub, Hub destinationHub, Double distance, LocalDateTime estimatedTime) {
+	public HubPath(Hub sourceHub, Hub destinationHub, Double distance, LocalTime estimatedTime) {
 		this.sourceHub = sourceHub;
 		this.destinationHub = destinationHub;
 		this.distance = distance;
 		this.estimatedTime = estimatedTime;
 	}
 
+	public void updatePath(Double newDistance, LocalTime newEstimatedTime) {
+		if (newDistance != null) {
+			this.distance = newDistance;
+		}
+		if (newEstimatedTime != null) {
+			this.estimatedTime = newEstimatedTime;
+		}
+	}
+
+	public void delete(String userId) {
+		this.setDeletedBy(userId);
+		this.setDeletedAt(LocalDateTime.now());
+		this.setIsDeleted();
+	}
 }

@@ -10,29 +10,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HubPathCreateResDTO {
+public class HubPathUpdateResDTO {
 	private UUID pathId;
 	private UUID sourceHubId;
 	private UUID destinationHubId;
 	private Double distance;
 	private LocalTime estimatedTime;
-	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 
-	public static HubPathCreateResDTO of(HubPath hubPath) {
-		return HubPathCreateResDTO.builder()
+	public static HubPathUpdateResDTO of(HubPath hubPath) {
+		return HubPathUpdateResDTO.builder()
 			.pathId(hubPath.getId())
 			.sourceHubId(hubPath.getSourceHub().getId())
 			.destinationHubId(hubPath.getDestinationHub().getId())
 			.distance(hubPath.getDistance())
 			.estimatedTime(hubPath.getEstimatedTime())
-			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.build();
 	}
 }

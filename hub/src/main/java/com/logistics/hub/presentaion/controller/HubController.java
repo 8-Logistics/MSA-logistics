@@ -55,11 +55,11 @@ public class HubController {
 
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@DeleteMapping("/hubs/{hubId}")
-	public ResponseEntity<Void> deleteHub(
+	public ResponseEntity<String> deleteHub(
 		@AuthenticationPrincipal CustomPrincipal customPrincipal,
 		@PathVariable(name = "hubId") UUID hubId) {
 		hubService.deleteHub(hubId, customPrincipal.getUserId());
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok("Hub successfully deleted");
 	}
 
 }
