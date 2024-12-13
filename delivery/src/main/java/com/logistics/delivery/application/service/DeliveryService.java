@@ -12,7 +12,6 @@ import com.logistics.delivery.infrastructure.client.HubClient;
 import com.logistics.delivery.infrastructure.client.UserClient;
 import com.logistics.delivery.infrastructure.client.VendorClient;
 import com.logistics.delivery.infrastructure.client.dto.DeliveryManagerResDto;
-import com.logistics.delivery.infrastructure.client.dto.DeliveryManagerStatusUpdateReqDto;
 import com.logistics.delivery.infrastructure.client.dto.HubPathResDto;
 import com.logistics.delivery.infrastructure.client.dto.VendorResDto;
 import jakarta.transaction.Transactional;
@@ -148,12 +147,7 @@ public class DeliveryService {
         }
 
         // FeignClient 호출
-        userClient.updateDeliveryManagerStatus(
-                DeliveryManagerStatusUpdateReqDto.builder()
-                        .deliveryManagerId(deliveryManagerId)
-                        .status(deliveryManagerStatus)
-                        .build()
-        );
+        userClient.updateDeliveryManagerStatus(deliveryManagerId, deliveryManagerStatus);
     }
 
 
