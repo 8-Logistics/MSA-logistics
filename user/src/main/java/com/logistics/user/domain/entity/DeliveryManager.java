@@ -1,6 +1,7 @@
 package com.logistics.user.domain.entity;
 
 import com.logistics.user.domain.enums.DeliveryManagerType;
+import com.logistics.user.domain.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeliveryManager {
+public class DeliveryManager extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,7 +30,20 @@ public class DeliveryManager {
     @Enumerated(EnumType.STRING)
     private DeliveryManagerType deliveryManagerType;
 
+    @Column(nullable = true)
     private UUID sourceHubId;
 
-    private Integer deliverySequence;
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING_DELIVERY;
+
+    private int deliverySequence;
+
+    public static DeliveryManager createDeliveryManager(User user, DeliveryManagerType type, UUID sourceHubId){
+        return DeliveryManager.builder()
+                .user(user)
+                .deliveryManagerType(type)
+                .sourceHubId(sourceHubId)
+                .build();
+    }
+
 }
