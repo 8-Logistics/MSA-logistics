@@ -1,5 +1,6 @@
 package com.logistics.user.application.service;
 
+import com.logistics.user.application.dto.OrderUserDto;
 import com.logistics.user.application.dto.UserModifyReqDto;
 import com.logistics.user.application.dto.UserRoleUpdateDto;
 import com.logistics.user.application.dto.UserSearchResDto;
@@ -78,6 +79,16 @@ public class UserServiceImpl implements UserService {
         }
 
         return true;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public OrderUserDto getUserInfo(Long userId) {
+
+        User user = userRepository.findByIdAndIsDeleteFalse(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
+
+        return OrderUserDto.toResponse(user.getName(), user.getSlackId());
     }
 
 
