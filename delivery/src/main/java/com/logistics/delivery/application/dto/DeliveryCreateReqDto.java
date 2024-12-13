@@ -27,8 +27,4 @@ public class DeliveryCreateReqDto {
 
     @NotBlank
     private final String slackId; // 수령인의 Slack ID
-
-    // 배송 경로에 필요한 필드
-    @NotNull
-    private final UUID hubDeliveryManagerId; // 허브 배송 담당자 ID
 }

@@ -25,7 +25,7 @@ public class DeliveryController {
 
         DeliveryResDto response = deliveryService.createDelivery(request);
 
-        return ApiResponse.success("배달 생성 성공", response);
+        return ApiResponse.success("배송 생성 성공", response);
     }
 
     @PatchMapping("/deliveries/{deliveryId}")
@@ -34,13 +34,13 @@ public class DeliveryController {
             @PathVariable UUID deliveryId,
             @RequestBody @Valid DeliveryUpdateReqDto request) {
         DeliveryUpdateResDto response = deliveryService.updateDeliveryStatus(deliveryId, request);
-        return ApiResponse.success("배달 조회 성공", response);
+        return ApiResponse.success("배송 조회 성공", response);
     }
 
     @DeleteMapping("/deliveries/{deliveryId}")
     @PreAuthorize("hasRole('MASTER')")
-    public ResponseEntity<String> deleteDelivery(@PathVariable UUID deliveryId) {
+    public ApiResponse<String> deleteDelivery(@PathVariable UUID deliveryId) {
         deliveryService.deleteDelivery(deliveryId);
-        return ResponseEntity.ok("Delivery deleted successfully.");
+        return ApiResponse.success("배송 삭제 성공");
     }
 }
