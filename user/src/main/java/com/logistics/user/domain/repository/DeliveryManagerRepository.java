@@ -11,4 +11,5 @@ public interface DeliveryManagerRepository extends JpaRepository<DeliveryManager
 
     Optional<DeliveryManager> findByUserIdAndIsDeleteFalse(Long userId);
 
+    Optional<DeliveryManager> findByIdAndIsDeleteFalse(UUID deliveryId);
 }

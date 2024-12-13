@@ -1,16 +1,21 @@
 package com.logistics.user.application.service;
 
-import com.logistics.user.application.HubService;
+import com.logistics.user.application.HubFeignService;
 import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
 import com.logistics.user.domain.entity.DeliveryManager;
 import com.logistics.user.domain.entity.User;
 import com.logistics.user.domain.enums.DeliveryManagerType;
+import com.logistics.user.domain.enums.DeliveryStatus;
 import com.logistics.user.domain.enums.UserRole;
 import com.logistics.user.domain.repository.DeliveryManagerRepository;
 import com.logistics.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +23,9 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     private final DeliveryManagerRepository deliveryManagerRepository;
     private final UserRepository userRepository;
-    private HubService hubService;
+    private HubFeignService hubFeignService;
 
+    @Transactional
     @Override
     public DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request) {
 
@@ -30,7 +36,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
         if(request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
 
-            if(!hubService.checkHub(request.getSourceHubId())){
+            if(!hubFeignService.checkHub(request.getSourceHubId())){
                 throw new IllegalArgumentException("Hub Not Found");
             }
         }
@@ -39,5 +45,19 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
                 request.getDeliveryManagerType(), request.getSourceHubId()));
 
         return DeliveryManagerSearchResDto.toResponse(manager);
+    }
+
+    @Transactional
+    @Override
+    public void deleteDeliveryManager(UUID deliveryId) {
+
+        DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryId)
+                .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
+
+        if(deliveryManager.getDeliveryStatus() == DeliveryStatus.IN_DELIVERY){
+            throw new IllegalArgumentException("배송중인 배송담당자 입니다. 추후에 다시 요청하세요");
+        }
+        deliveryManager.setIsDelete();
+
     }
 }
