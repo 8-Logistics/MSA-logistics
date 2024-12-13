@@ -89,14 +89,10 @@ public class HubController {
 		return hubService.checkHub(hubId);
 	}
 
-	;
-
 	@GetMapping("/hubs/user/{userId}")
 	public UUID getUserHubId(@PathVariable("userId") String userId) {
 		log.info("getUserHubId Controller");
 		return hubService.getUserHubId(userId);
 	}
-
-	;
 
 }
