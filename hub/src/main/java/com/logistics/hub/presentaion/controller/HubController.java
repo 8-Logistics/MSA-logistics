@@ -22,7 +22,6 @@ import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
 import com.logistics.hub.application.service.CustomPrincipal;
 import com.logistics.hub.application.service.HubService;
-import com.logistics.hub.domain.entity.Hub;
 
 import lombok.RequiredArgsConstructor;
 

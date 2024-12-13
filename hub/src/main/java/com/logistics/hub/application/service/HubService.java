@@ -66,8 +66,8 @@ public class HubService {
 		validateSourceAndDestination(sourceHub, destinationHub);
 		HubPath newPath = new HubPath(UUID.randomUUID(), sourceHub, destinationHub, request.getDistance(),
 			request.getEstimatedTime());
-		HubPath path = sourceHub.addOutboundPath(newPath);
-		hubRepository.save(sourceHub);
+		Hub newHub = sourceHub.addOutboundPath(newPath);
+		hubRepository.save(newHub);
 		return HubPathCreateResDTO.of(newPath);
 	}
 
@@ -99,4 +99,8 @@ public class HubService {
 		}
 	}
 
+	public HubPath getHubPath(UUID hubId, UUID pathId) {
+		Hub hub = getHub(hubId);
+		return hub.findOutboundPathById(pathId);
+	}
 }

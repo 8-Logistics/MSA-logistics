@@ -22,7 +22,7 @@ public class HubReadResDto {
 	private LocalDateTime createdAt;
 
 	public static HubReadResDto of(Hub hub) {
-		return  HubReadResDto.builder()
+		return HubReadResDto.builder()
 			.id(hub.getId())
 			.name(hub.getName())
 			.address(hub.getAddress())

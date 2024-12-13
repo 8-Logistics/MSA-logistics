@@ -9,9 +9,9 @@ import java.util.UUID;
 import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -50,7 +50,7 @@ public class Hub extends BaseEntity {
 	@Column(name = "manager_id")
 	private String managerId;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "source_hub_id")
 	private List<HubPath> outboundPaths = new ArrayList<>();
 
@@ -88,9 +88,9 @@ public class Hub extends BaseEntity {
 		this.setIsDeleted();
 	}
 
-	public HubPath addOutboundPath(HubPath path) {
-		this.outboundPaths.add(path);
-		return path;
+	public Hub addOutboundPath(HubPath newPath) {
+		this.outboundPaths.add(newPath);
+		return this;
 	}
 
 	public HubPath updateOutboundPath(UUID pathId, Double newDistance, LocalTime newEstimatedTime) {
