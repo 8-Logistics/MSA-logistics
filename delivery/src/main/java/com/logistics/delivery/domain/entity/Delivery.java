@@ -49,4 +49,9 @@ public class Delivery extends BaseEntity {
         this.deliveryPath = deliveryPath;
         deliveryPath.updateDelivery(this);
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+        this.deliveryPath.updateStatus(status);
+    }
 }

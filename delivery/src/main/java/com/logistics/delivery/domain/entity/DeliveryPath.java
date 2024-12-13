@@ -57,4 +57,13 @@ public class DeliveryPath extends BaseEntity {
         this.delivery = delivery;
     }
 
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updateVendorDeliveryManager(UUID vendorDeliveryManagerId, int vendorDeliveryManagerSequence) {
+        this.vendorDeliveryManagerId = vendorDeliveryManagerId;
+        this.vendorDeliveryManagerSequence = vendorDeliveryManagerSequence;
+    }
+
 }

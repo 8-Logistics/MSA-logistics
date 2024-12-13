@@ -1,12 +1,16 @@
 package com.logistics.delivery.presentation.controller;
 
-import com.logistics.delivery.application.dto.DeliveryCreateReqDto;
-import com.logistics.delivery.application.dto.DeliveryResDto;
+import com.logistics.delivery.application.CustomPrincipal;
+import com.logistics.delivery.application.dto.*;
 import com.logistics.delivery.application.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,17 +20,20 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping("/deliveries")
-    public ResponseEntity<DeliveryResDto> createDelivery(
-            @RequestHeader("username") String username,
-            @RequestHeader("role") String role,
-            @RequestBody @Valid DeliveryCreateReqDto request) {
+    @PreAuthorize("hasRole('MASTER')")
+    public ApiResponse<DeliveryResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
 
-        if (!"MASTER".equals(role)) {
-            throw new IllegalStateException("관리자만 사용 가능한 기능입니다.");
-        }
+        DeliveryResDto response = deliveryService.createDelivery(request);
 
-        DeliveryResDto response = deliveryService.createDelivery(username, request);
+        return ApiResponse.success("배달 생성 성공", response);
+    }
 
-        return ResponseEntity.ok(response);
+    @PatchMapping("/{deliveryId}")
+    @PreAuthorize("hasRole('MASTER') or hasRole('HUB_MANAGER') or hasRole('DELIVERY_MANAGER')")
+    public ApiResponse<DeliveryUpdateResDto> updateDeliveryStatus(
+            @PathVariable UUID deliveryId,
+            @RequestBody @Valid DeliveryUpdateReqDto request) {
+        DeliveryUpdateResDto response = deliveryService.updateDeliveryStatus(deliveryId, request);
+        return ApiResponse.success("배달 조회 성공", response);
     }
 }
