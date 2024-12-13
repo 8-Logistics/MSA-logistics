@@ -1,5 +1,6 @@
 package com.logistics.order.domain.entity;
 
+import com.logistics.order.application.dto.OrderProductDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,10 +40,10 @@ public class Order extends BaseEntity {
     @Column
     private String pickupRequest;
 
-    public Order createOrder(Order order, UUID providerVendorId, String userId, UUID deliveryId) {
+    public Order createOrder(Order order, OrderProductDto orderProductDto, String userId, UUID deliveryId) {
         return Order.builder()
                 .deliveryId(deliveryId)
-                .providerVendorId(providerVendorId)
+                .providerVendorId(orderProductDto.getProductVendorId())
                 .receiveVendorId(order.getReceiveVendorId())
                 .productId(order.getProductId())
                 .recipientId(userId)

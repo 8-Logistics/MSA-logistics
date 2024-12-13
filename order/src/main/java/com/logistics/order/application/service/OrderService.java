@@ -9,6 +9,7 @@ import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.infrastructure.client.DeliveryFeignClient;
 import com.logistics.order.infrastructure.client.ProductFeignClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -26,11 +28,10 @@ public class OrderService {
     private DeliveryFeignClient deliveryFeignClient;
 
     @Transactional
-    public OrderCreateResDto createOrder(OrderCreateReqDto request, CustomPrincipal customPrincipal) {
+    public OrderCreateResDto createOrder(OrderCreateReqDto request, String userId) {
         Order order = OrderCreateReqDto.toOrder(request);
         int quantity = request.getQuantity();
 
-        UUID providerVendorId = UUID.fromString("f85b4dc3-7f44-4bd6-bdc9-7f3b51c59c21");
         OrderProductDto orderProductDto = productFeignClient.getStock(order.getProductId());
 
         if(orderProductDto.getStock() >= quantity) {
@@ -45,7 +46,7 @@ public class OrderService {
         if(Objects.isNull(deliveryId)){
             throw new IllegalArgumentException("배송 생성에 실패했습니다.");
         }
-        order = order.createOrder(order, providerVendorId, customPrincipal.getUserId(), deliveryId);
+        order = order.createOrder(order, orderProductDto, userId, deliveryId);
         return OrderCreateResDto.from(orderRepository.save(order));
     }
 }
