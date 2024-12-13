@@ -13,10 +13,13 @@ import java.util.UUID;
 public class OrderProductDto {
     private int stock;
     private UUID productVendorId;
+    private UUID productSourceHubId;
+
     public static OrderProductDto from(Product product) {
         return OrderProductDto.builder()
                 .stock(product.getStock())
                 .productVendorId(product.getVendorId())
+                .productSourceHubId(product.getHubId())
                 .build();
     }
 

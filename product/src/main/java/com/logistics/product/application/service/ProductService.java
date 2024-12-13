@@ -83,7 +83,7 @@ public class ProductService {
         product.softDelete(userId);
     }
 
-    public OrderProductDto getStock(UUID productId) {
+    public OrderProductDto getProductInfo(UUID productId) {
         Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );

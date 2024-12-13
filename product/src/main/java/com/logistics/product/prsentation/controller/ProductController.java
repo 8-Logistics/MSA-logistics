@@ -55,8 +55,8 @@ public class ProductController {
      */
 
     @GetMapping("/products/stock/{productId}")
-    public OrderProductDto getStock(@PathVariable(name="productId") UUID productId){
-        return productService.getStock(productId);
+    public OrderProductDto getProductInfo(@PathVariable(name="productId") UUID productId){
+        return productService.getProductInfo(productId);
     }
 
     @PutMapping("/products/stockUpdate/{productId}/{stock}")
