@@ -25,7 +25,6 @@ public class UserSearchResDto {
                 .slackId(user.getSlackId())
                 .name(user.getName())
                 .role(user.getRole().toString())
-                .userStatus(user.getUserStatus().toString())
                 .build();
     }
 

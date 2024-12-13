@@ -1,6 +1,8 @@
 package com.logistics.user.controller;
 
 import com.logistics.user.application.CustomPrincipal;
+import com.logistics.user.application.dto.UserModifyReqDto;
+import com.logistics.user.application.dto.UserRoleUpdateDto;
 import com.logistics.user.application.dto.UserSearchResDto;
 import com.logistics.user.application.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,25 @@ public class UserController {
 
     private final UserService userService;
 
-
+    /**
+     * 사용자 단건 조회 API
+     *
+     * @param userId
+     * @return
+     */
     @GetMapping("/users/{userId}")
-    public ResponseEntity<UserSearchResDto> findUser(@AuthenticationPrincipal CustomPrincipal customPrincipal,
-            @PathVariable("userId") Long userId) {
+    public ResponseEntity<UserSearchResDto> findUser(@PathVariable("userId") Long userId) {
 
         UserSearchResDto response = userService.findUser(userId);
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 사용자 삭제 API
+     *
+     * @param userId
+     * @return
+     */
     @PreAuthorize("hasAnyAuthority('MASTER')")
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
@@ -35,7 +47,27 @@ public class UserController {
         return ResponseEntity.ok("사용자 삭제 성공");
     }
 
+    /**
+     * TODO 공통 응답으로 다 바꾸기!!
+     *  사용자 수정 API
+     *
+     * @param userId
+     * @param request
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('MASTER')")
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<?> modifyUser(@PathVariable("userId") Long userId, @RequestBody UserModifyReqDto request) {
 
+        UserSearchResDto response = userService.modifyUser(userId, request);
 
+        return ResponseEntity.ok("수정이 완료 되었습니다.");
+    }
 
+    // 허브 담당자 & 업체 담당자 role 수정 API
+    @PreAuthorize("hasAnyAuthority('MASTER')")
+    @PutMapping("/users/{userId}/role")
+    public boolean updateUserRole(@PathVariable("userId") Long userId, @RequestBody UserRoleUpdateDto request){
+        return userService.updateUserRole(userId, request);
+    }
 }
