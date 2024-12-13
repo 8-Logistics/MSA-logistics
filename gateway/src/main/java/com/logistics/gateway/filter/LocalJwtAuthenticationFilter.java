@@ -1,6 +1,7 @@
 package com.logistics.gateway.filter;
 
 import com.logistics.gateway.application.AuthService;
+import com.logistics.gateway.infrastructure.ResponseUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -46,7 +47,7 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
 
         if (token == null || !validateToken(token, exchange)) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return ResponseUtils.handleUnauthorizedText(exchange, "message : Authorization token is invalid or missing");
         }
 
         return chain.filter(exchange);
@@ -67,6 +68,10 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
                     .verifyWith(key)
                     .build().parseSignedClaims(token);
             log.info("#####payload :: " + claimsJws.getPayload().toString());
+
+            if(claimsJws.getPayload().getSubject() != null) {
+                return false;
+            }
 
             String username = claimsJws.getPayload().get("X-User-Id").toString();
             String role = claimsJws.getPayload().get("X-Role").toString();
