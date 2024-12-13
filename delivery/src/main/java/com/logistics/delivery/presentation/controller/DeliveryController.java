@@ -4,6 +4,7 @@ import com.logistics.delivery.application.dto.*;
 import com.logistics.delivery.application.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,9 +42,20 @@ public class DeliveryController {
         return ApiResponse.success("배송 삭제 성공");
     }
 
-    @GetMapping("/{deliveryId}")
+    @GetMapping("/deliveries/{deliveryId}")
     public ApiResponse<DeliveryResDto> getDelivery(@PathVariable UUID deliveryId) {
         DeliveryResDto delivery = deliveryService.getDeliveryById(deliveryId);
         return ApiResponse.success("배송 조회 성공", delivery);
+    }
+
+    @GetMapping("/deliveries")
+    public ApiResponse<Page<DeliveryResDto>> getDeliveries(
+            @RequestParam(required = false, defaultValue = "recipientName") String condition, // 기준이 애매해서 default 수령인 기준 검색
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "false") boolean isAsc) {
+        Page<DeliveryResDto> deliveries = deliveryService.getDeliveries(condition, keyword, status, pageNumber, isAsc);
+        return ApiResponse.success("배송 목록 죄회 성공", deliveries);
     }
 }

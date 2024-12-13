@@ -13,6 +13,10 @@ import com.logistics.delivery.infrastructure.client.dto.HubPathResDto;
 import com.logistics.delivery.infrastructure.client.dto.VendorResDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -190,5 +194,27 @@ public class DeliveryService {
                 .updatedAt(delivery.getUpdatedAt())
                 .updatedBy(delivery.getUpdatedBy())
                 .build();
+    }
+
+    public Page<DeliveryResDto> getDeliveries(String condition, String keyword,
+                                              String status, int pageNumber, boolean isAsc) {
+        Sort sort = isAsc ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(pageNumber, 10, sort);
+
+        Page<Delivery> deliveryPage = deliveryRepository.getDeliveries(condition, keyword, status, pageable);
+
+        return deliveryPage.map(delivery -> DeliveryResDto.builder()
+                .id(delivery.getId())
+                .orderId(delivery.getOrderId())
+                .sourceHubId(delivery.getSourceHubId())
+                .destinationHubId(delivery.getDestinationHubId())
+                .address(delivery.getAddress())
+                .recipientName(delivery.getRecipientName())
+                .slackId(delivery.getSlackId())
+                .createdAt(delivery.getCreatedAt())
+                .createdBy(delivery.getCreatedBy())
+                .updatedAt(delivery.getUpdatedAt())
+                .updatedBy(delivery.getUpdatedBy())
+                .build());
     }
 }
