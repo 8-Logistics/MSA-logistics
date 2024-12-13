@@ -5,6 +5,7 @@ import com.logistics.delivery.application.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +58,11 @@ public class DeliveryController {
             @RequestParam(required = false, defaultValue = "false") boolean isAsc) {
         Page<DeliveryResDto> deliveries = deliveryService.getDeliveries(condition, keyword, status, pageNumber, isAsc);
         return ApiResponse.success("배송 목록 죄회 성공", deliveries);
+    }
+
+    @GetMapping("/deliveryPaths/{deliveryPathId}")
+    public ApiResponse<DeliveryPathResDto> getDeliveryPath(@PathVariable UUID deliveryPathId) {
+        DeliveryPathResDto deliveryPath = deliveryService.getDeliveryPathById(deliveryPathId);
+        return ApiResponse.success("배송 경로 조회 성공", deliveryPath);
     }
 }

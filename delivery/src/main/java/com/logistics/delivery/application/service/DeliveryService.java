@@ -4,6 +4,7 @@ import com.logistics.delivery.application.dto.*;
 import com.logistics.delivery.domain.entity.Delivery;
 import com.logistics.delivery.domain.entity.DeliveryPath;
 import com.logistics.delivery.domain.entity.Status;
+import com.logistics.delivery.domain.repository.DeliveryPathRepository;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import com.logistics.delivery.infrastructure.client.HubClient;
 import com.logistics.delivery.infrastructure.client.UserClient;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryPathRepository deliveryPathRepository;
     private final HubClient hubClient;
     private final UserClient userClient;
     private final VendorClient vendorClient;
@@ -217,4 +219,28 @@ public class DeliveryService {
                 .updatedBy(delivery.getUpdatedBy())
                 .build());
     }
+
+    @Transactional
+    public DeliveryPathResDto getDeliveryPathById(UUID deliveryPathId) {
+        DeliveryPath deliveryPath = deliveryPathRepository.findByIdAndIsDeleteFalse(deliveryPathId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 배송 경로를 찾을 수 없습니다: " + deliveryPathId));
+
+        return DeliveryPathResDto.builder()
+                .id(deliveryPath.getId())
+                .hubDeliveryManagerId(deliveryPath.getHubDeliveryManagerId())
+                .hubDeliveryManagerSequence(deliveryPath.getHubDeliveryManagerSequence())
+                .vendorDeliveryManagerId(deliveryPath.getVendorDeliveryManagerId())
+                .vendorDeliveryManagerSequence(deliveryPath.getVendorDeliveryManagerSequence())
+                .sourceHubId(deliveryPath.getSourceHubId())
+                .destinationHubId(deliveryPath.getDestinationHubId())
+                .distance(deliveryPath.getDistance())
+                .estimatedTime(deliveryPath.getEstimatedTime())
+                .status(deliveryPath.getStatus())
+                .createdAt(deliveryPath.getCreatedAt())
+                .createdBy(deliveryPath.getCreatedBy())
+                .updatedAt(deliveryPath.getUpdatedAt())
+                .updatedBy(deliveryPath.getUpdatedBy())
+                .build();
+    }
+
 }

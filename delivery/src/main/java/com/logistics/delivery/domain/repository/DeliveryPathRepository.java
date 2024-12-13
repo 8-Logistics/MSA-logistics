@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DeliveryPathRepository extends JpaRepository<DeliveryPath, UUID> {
-    Optional<DeliveryPath> findTopBySourceHubIdOrderByCreatedAtDesc(UUID sourceHubId);
+    Optional<DeliveryPath> findByIdAndIsDeleteFalse(UUID deliveryPathId);
 }
