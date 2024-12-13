@@ -17,6 +17,7 @@ import com.logistics.hub.application.dto.HubPathUpdateResDTO;
 import com.logistics.hub.application.dto.HubReadResDto;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
+import com.logistics.hub.application.dto.UserRoleUpdateDto;
 import com.logistics.hub.domain.entity.Hub;
 import com.logistics.hub.domain.entity.HubPath;
 import com.logistics.hub.domain.enums.SortOption;
@@ -49,9 +50,10 @@ public class HubService {
 	@Transactional
 	public void assignHubManager(UUID hubId, String userId) {
 		Hub hub = getHub(hubId);
-		String userRole = "HUB_MANAGER";
+		UserRoleUpdateDto dto = new UserRoleUpdateDto();
+		dto.setSourceHubId(hubId);
 		try {
-			userService.updateUserRole(userId, userRole);
+			userService.updateUserRole(userId, dto);
 		} catch (FeignException e) {
 			throw new IllegalArgumentException("Failed to update user role", e);
 		}
