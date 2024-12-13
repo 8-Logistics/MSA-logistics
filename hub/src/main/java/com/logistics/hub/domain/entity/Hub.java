@@ -111,4 +111,10 @@ public class Hub extends BaseEntity {
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("HubPath not found with id: " + pathId));
 	}
+	public HubPath findPathById(UUID hubId) {
+		return this.outboundPaths.stream()
+			.filter(path -> path.getDestinationHub().getId().equals(hubId) && !path.isDelete())
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("HubPath not found with DestinationHubId: " + hubId));
+	}
 }

@@ -69,6 +69,7 @@ public class HubService {
 		Hub sourceHub = getHub(sourceHubId);
 		Hub destinationHub = getHub(request.getDestinationHubId());
 		validateSourceAndDestination(sourceHub, destinationHub);
+		isPathExist(sourceHub, destinationHub);
 		HubPath newPath = new HubPath(UUID.randomUUID(), sourceHub, destinationHub, request.getDistance(),
 			request.getEstimatedTime());
 		Hub newHub = sourceHub.addOutboundPath(newPath);
@@ -98,7 +99,11 @@ public class HubService {
 	public void validateSourceAndDestination(Hub sourceHub, Hub destinationHub) {
 		if (sourceHub.equals(destinationHub)) {
 			throw new IllegalArgumentException("Source hub and destination hub cannot be the same.");
-		} else if (sourceHub.getOutboundPaths().stream()
+		}
+	}
+
+	public void isPathExist(Hub sourceHub, Hub destinationHub) {
+		if (sourceHub.getOutboundPaths().stream()
 			.anyMatch(hubPath -> hubPath.getDestinationHub().equals(destinationHub))) {
 			throw new IllegalArgumentException("This hubPath is already exist.");
 		}
@@ -111,9 +116,15 @@ public class HubService {
 
 	@Transactional(readOnly = true)
 	public Page<HubReadResDto> searchHubs(UUID hubId, int page, int size, String keyword, SortOption sortOption) {
-		log.info("keyword : {}", keyword);
-		log.info("SortOption : {}", sortOption);
 		Pageable pageable = PageRequest.of(page, size);
 		return hubRepository.searchHubs(hubId, pageable, keyword, sortOption);
+	}
+
+	@Transactional(readOnly = true)
+	public HubPath getExactHubPath(UUID sourceHubId, UUID destinationHubId) {
+		Hub sourceHub = getHub(sourceHubId);
+		Hub destinationHub = getHub(destinationHubId);
+		validateSourceAndDestination(sourceHub, destinationHub);
+		return sourceHub.findPathById(destinationHubId);
 	}
 }
