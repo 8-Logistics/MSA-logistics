@@ -1,7 +1,7 @@
 package com.logistics.delivery.infrastructure.config;
 
 
-import com.logistics.order.infrastructure.filter.CustomAuthorizationFilter;
+import com.logistics.delivery.infrastructure.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final com.logistics.order.application.config.CustomAccessDeniedHandler accessDeniedHandler;
+    private final com.logistics.delivery.infrastructure.config.CustomAccessDeniedHandler accessDeniedHandler;
 
     // SWAGGER는 들어 갈 수 있게 제외한다.
     private final List<String> SWAGGER = List.of(
