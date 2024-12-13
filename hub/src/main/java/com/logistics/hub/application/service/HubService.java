@@ -2,7 +2,11 @@ package com.logistics.hub.application.service;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubCreateResDTO;
@@ -10,14 +14,15 @@ import com.logistics.hub.application.dto.HubPathCreateReqDTO;
 import com.logistics.hub.application.dto.HubPathCreateResDTO;
 import com.logistics.hub.application.dto.HubPathUpdateReqDTO;
 import com.logistics.hub.application.dto.HubPathUpdateResDTO;
+import com.logistics.hub.application.dto.HubReadResDto;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
 import com.logistics.hub.domain.entity.Hub;
 import com.logistics.hub.domain.entity.HubPath;
+import com.logistics.hub.domain.enums.SortOption;
 import com.logistics.hub.domain.repository.HubRepository;
 
 import feign.FeignException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,5 +107,13 @@ public class HubService {
 	public HubPath getHubPath(UUID hubId, UUID pathId) {
 		Hub hub = getHub(hubId);
 		return hub.findOutboundPathById(pathId);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<HubReadResDto> searchHubs(UUID hubId, int page, int size, String keyword, SortOption sortOption) {
+		log.info("keyword : {}", keyword);
+		log.info("SortOption : {}", sortOption);
+		Pageable pageable = PageRequest.of(page, size);
+		return hubRepository.searchHubs(hubId, pageable, keyword, sortOption);
 	}
 }

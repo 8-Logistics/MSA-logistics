@@ -2,6 +2,7 @@ package com.logistics.hub.presentaion.controller;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +23,7 @@ import com.logistics.hub.application.dto.HubUpdateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateResDTO;
 import com.logistics.hub.application.service.CustomPrincipal;
 import com.logistics.hub.application.service.HubService;
+import com.logistics.hub.domain.enums.SortOption;
 
 import lombok.RequiredArgsConstructor;
 
@@ -68,6 +70,16 @@ public class HubController {
 	public ResponseEntity<HubReadResDto> getHub(
 		@PathVariable(name = "hubId") UUID hubId) {
 		return ResponseEntity.ok(HubReadResDto.of(hubService.getHub(hubId)));
+	}
+
+	@GetMapping("/hubs")
+	public ResponseEntity<Page<HubReadResDto>> searchHubs(
+		@RequestParam(value = "page", defaultValue = "1") int page,
+		@RequestParam(value = "size", defaultValue = "10") int size,
+		@RequestParam(value = "hubId", required = false) UUID hubId,
+		@RequestParam(value = "keyword", required = false) String keyword,
+		@RequestParam(value = "sortOption", required = false, defaultValue = "NAME_ASC") SortOption sortOption) {
+		return ResponseEntity.ok(hubService.searchHubs(hubId, page - 1, size, keyword, sortOption));
 	}
 
 }
