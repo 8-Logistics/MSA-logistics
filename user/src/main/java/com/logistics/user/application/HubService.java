@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public interface HubService {
 
-    Boolean getHubs(UUID hubId);
+    boolean checkHub(UUID hubId);
 
 }

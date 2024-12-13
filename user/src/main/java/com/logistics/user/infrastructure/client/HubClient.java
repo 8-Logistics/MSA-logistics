@@ -11,7 +11,7 @@ import java.util.UUID;
 @FeignClient(name = "hub-service",configuration = FeignConfig.class)
 public interface HubClient extends HubService {
 
-    @GetMapping(value = "/api/v1/hubs/{hubId}")
+    @GetMapping(value = "/api/v1/hubs/hub/{hubId}")
     @Override
-    Boolean getHubs(@PathVariable("hubId") UUID hubId);
+    boolean checkHub(@PathVariable("hubId") UUID hubId);
 }

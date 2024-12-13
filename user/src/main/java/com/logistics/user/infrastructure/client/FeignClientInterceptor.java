@@ -21,7 +21,7 @@ public class FeignClientInterceptor implements RequestInterceptor {
             String role = customPrincipal.getRole();
 
             requestTemplate.header("X-User-Id", username);
-            requestTemplate.header("X-Roles", role);
+            requestTemplate.header("X-Role", role);
         }
     }
 }
