@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -158,5 +159,21 @@ public class DeliveryService {
         } else {
             return delivery.getDeliveryPath().getVendorDeliveryManagerId(); // 업체 담당자
         }
+    }
+
+    @Transactional
+    public void deleteDelivery(UUID deliveryId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 배송을 찾을 수 없습니다: " + deliveryId));
+
+        if (delivery.isDelete()) {
+            throw new IllegalStateException("이미 삭제된 배송입니다..");
+        }
+        DeliveryPath deliveryPath = delivery.getDeliveryPath();
+
+        deliveryPath.setIsDelete();
+        delivery.setIsDelete();
+
+
     }
 }
