@@ -16,7 +16,7 @@ public class ProductResDto {
     private String productName;
     private UUID vendorId;
     private UUID hubId;
-    private Long stock;
+    private int stock;
     private BigDecimal price;
     private String description;
 

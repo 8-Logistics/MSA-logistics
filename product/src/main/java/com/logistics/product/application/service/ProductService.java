@@ -1,5 +1,6 @@
 package com.logistics.product.application.service;
 
+import com.logistics.product.application.dto.OrderProductDto;
 import com.logistics.product.application.dto.ProductReqDto;
 import com.logistics.product.application.dto.ProductResDto;
 import com.logistics.product.application.dto.ProductUpdateReqDto;
@@ -34,8 +35,6 @@ public class ProductService {
         if(!hubFeignClient.checkHub(request.getHubId())){
             throw new IllegalArgumentException("상품을 등록하려는 업체의 소속 허브가 존재하지 않습니다.");
         }
-
-        //product.setCreatedBy(userName);
 
         ProductResDto.from(productRepository.save(product));
         return product.getProductId();
@@ -83,5 +82,20 @@ public class ProductService {
            }
         }
         product.softDelete(userId);
+    }
+
+    public OrderProductDto getStock(UUID productId) {
+        Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        return OrderProductDto.from(product);
+    }
+
+    @Transactional
+    public void updateStock(UUID productId, int stock) {
+        Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        product.setStock(stock);
     }
 }

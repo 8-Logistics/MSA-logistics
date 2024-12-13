@@ -1,21 +1,14 @@
 package com.logistics.product.prsentation.controller;
 
 import com.logistics.product.application.dto.ApiResponse;
+import com.logistics.product.application.dto.OrderProductDto;
 import com.logistics.product.application.dto.ProductReqDto;
 import com.logistics.product.application.dto.ProductUpdateReqDto;
 import com.logistics.product.application.service.ProductService;
-import com.logistics.product.domain.entity.Product;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -56,5 +49,20 @@ public class ProductController {
         return ApiResponse.success("상품이 삭제되었습니다.");
     }
 
+    /**
+     * Feign Client
+     */
+
+    @GetMapping("/products/stock/{productId}")
+    public OrderProductDto getStock(@PathVariable(name="productId") UUID productId){
+        return productService.getStock(productId);
+    }
+
+    @PutMapping("/products/stockUpdate/{productId}/{stock}")
+    public void updateStock(
+            @PathVariable(name="productId") UUID productId,
+            @PathVariable(name="stock") int stock){
+        productService.updateStock(productId, stock);
+    }
 
 }

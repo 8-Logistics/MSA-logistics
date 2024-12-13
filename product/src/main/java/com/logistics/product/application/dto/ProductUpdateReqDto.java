@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProductUpdateReqDto {
     private String name;
-    private Long stock;
+    private int stock;
     private String description;
     private BigDecimal price;
 }

@@ -14,7 +14,7 @@ public class ProductReqDto {
         private String name;
         private UUID vendorId;
         private UUID hubId;
-        private Long stock;
+        private int stock;
         private BigDecimal price;
         private String description;
 

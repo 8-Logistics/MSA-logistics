@@ -31,7 +31,7 @@ public class Product extends BaseEntity{
     private UUID hubId;
 
     @Column
-    private Long stock;
+    private int stock;
 
     @Column
     private BigDecimal price;
@@ -49,7 +49,7 @@ public class Product extends BaseEntity{
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void updateProduct(String name, Long stock, String description, BigDecimal price) {
+    public void updateProduct(String name, int stock, String description, BigDecimal price) {
         this.name = name;
         this.stock = stock;
         this.description = description;
