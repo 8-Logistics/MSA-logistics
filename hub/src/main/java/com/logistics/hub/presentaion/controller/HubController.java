@@ -26,7 +26,9 @@ import com.logistics.hub.application.service.HubService;
 import com.logistics.hub.domain.enums.SortOption;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -82,5 +84,19 @@ public class HubController {
 		return ResponseEntity.ok(hubService.searchHubs(hubId, page - 1, size, keyword, sortOption));
 	}
 
+	@GetMapping("/hubs/{hubId}/exists")
+	public boolean checkHub(@PathVariable("hubId") UUID hubId) {
+		return hubService.checkHub(hubId);
+	}
+
+	;
+
+	@GetMapping("/hubs/user/{userId}")
+	public UUID getUserHubId(@PathVariable("userId") String userId) {
+		log.info("getUserHubId Controller");
+		return hubService.getUserHubId(userId);
+	}
+
+	;
 
 }

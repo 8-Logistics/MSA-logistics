@@ -122,6 +122,7 @@ public class HubService {
 		return hubRepository.searchHubs(hubId, pageable, keyword, sortOption);
 	}
 
+	// 특정허브경로 정보 조회 : FeignClient 호출 메서드
 	@Transactional(readOnly = true)
 	public HubPath getExactHubPath(UUID sourceHubId, UUID destinationHubId) {
 		Hub sourceHub = getHub(sourceHubId);
@@ -129,4 +130,20 @@ public class HubService {
 		validateSourceAndDestination(sourceHub, destinationHub);
 		return sourceHub.findPathById(destinationHubId);
 	}
+
+	// 허브 있는지 체크 : FeignClient 호출 메서드
+	public boolean checkHub(UUID hubId) {
+		return getHub(hubId) != null;
+	}
+
+	// 허브 매니저ID로 소속허브ID 확인: FeignClient 호출 메서드
+	public UUID getUserHubId(String userId) {
+		log.info("getUserHubId Service");
+		return hubRepository.findAll().stream()
+			.filter(hub -> hub.getManagerId().equals(userId))
+			.map(Hub::getId)
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("No hub found for userId: " + userId));
+	}
+
 }
