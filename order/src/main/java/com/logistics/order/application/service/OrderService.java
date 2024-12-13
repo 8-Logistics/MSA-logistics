@@ -31,13 +31,13 @@ public class OrderService {
         int quantity = request.getQuantity();
 
         UUID providerVendorId = UUID.fromString("f85b4dc3-7f44-4bd6-bdc9-7f3b51c59c21");
-        /*OrderProductDto orderProductDto = productFeignClient.getStock(order.getProductId());
+        OrderProductDto orderProductDto = productFeignClient.getStock(order.getProductId());
 
         if(orderProductDto.getStock() >= quantity) {
             productFeignClient.decreaseStock(order.getProductId(), orderProductDto.getStock() - quantity);
         }else {
             throw new IllegalArgumentException("재고가 부족합니다.");
-        }*/
+        }
 
         //UUID deliveryId = deliveryFeignClient.createDelivery(request);
         UUID deliveryId = UUID.fromString("6e0c1b60-b5b8-4c85-bf0c-914f0cb83b24");
