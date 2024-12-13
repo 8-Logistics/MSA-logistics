@@ -11,4 +11,6 @@ public interface DeliveryManagerService {
     DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request);
 
     void deleteDeliveryManager(UUID deliveryId);
+
+    void updateDeliveryStatus(UUID deliveryManagerId, String deliveryStatus);
 }

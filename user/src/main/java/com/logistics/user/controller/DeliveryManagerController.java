@@ -26,10 +26,20 @@ public class DeliveryManagerController {
     }
 
     // 배송 담당자 삭제 API
-    @DeleteMapping("/delivery-manager/{deliveryId}")
-    public ResponseEntity<?> deleteDeliveryManager(@PathVariable UUID deliveryId){
-        deliveryManagerService.deleteDeliveryManager(deliveryId);
+    @PreAuthorize("hasAnyAuthority('MASTER')")
+    @DeleteMapping("/delivery-manager/{deliveryManagerId}")
+    public ResponseEntity<?> deleteDeliveryManager(@PathVariable UUID deliveryManagerId){
+        deliveryManagerService.deleteDeliveryManager(deliveryManagerId);
         return ResponseEntity.ok("배송담당자가 삭제되었습니다.");
     }
+
+    // [Feign] 배송 상테 update API
+    @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER')")
+    @PutMapping("/delivery-manager/{deliveryManagerId}/updateStatus")
+    public void updateDeliveryStatus(@PathVariable UUID deliveryManagerId, @RequestParam("deliveryStatus")
+                                                  String deliveryStatus){
+        deliveryManagerService.updateDeliveryStatus(deliveryManagerId, deliveryStatus);
+    }
+
 
 }

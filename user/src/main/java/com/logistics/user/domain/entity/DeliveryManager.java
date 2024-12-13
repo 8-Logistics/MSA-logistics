@@ -46,4 +46,17 @@ public class DeliveryManager extends BaseEntity {
                 .build();
     }
 
+    public void updateDeliverySequence(){
+        this.deliverySequence++;
+    }
+
+    public void updateDeliveryStatus(String deliveryStatus){
+
+        if(DeliveryStatus.PENDING_DELIVERY.toString().equals(deliveryStatus)){
+            this.deliveryStatus = DeliveryStatus.PENDING_DELIVERY;
+        }
+
+        this.deliveryStatus = DeliveryStatus.IN_DELIVERY;
+    }
+
 }

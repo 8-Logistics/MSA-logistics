@@ -49,9 +49,9 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     @Transactional
     @Override
-    public void deleteDeliveryManager(UUID deliveryId) {
+    public void deleteDeliveryManager(UUID deliveryManagerId) {
 
-        DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryId)
+        DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
 
         if(deliveryManager.getDeliveryStatus() == DeliveryStatus.IN_DELIVERY){
@@ -59,5 +59,19 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         }
         deliveryManager.setIsDelete();
 
+    }
+
+    @Transactional
+    @Override
+    public void updateDeliveryStatus(UUID deliveryManagerId, String deliveryStatus) {
+
+        DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
+                .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
+
+        if(DeliveryStatus.IN_DELIVERY.toString().equals(deliveryStatus)){
+            deliveryManager.updateDeliverySequence();
+        }
+
+        deliveryManager.updateDeliveryStatus(deliveryStatus);
     }
 }
