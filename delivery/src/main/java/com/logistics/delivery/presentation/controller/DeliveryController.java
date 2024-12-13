@@ -1,13 +1,10 @@
 package com.logistics.delivery.presentation.controller;
 
-import com.logistics.delivery.application.CustomPrincipal;
 import com.logistics.delivery.application.dto.*;
 import com.logistics.delivery.application.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,9 +18,9 @@ public class DeliveryController {
 
     @PostMapping("/deliveries")
     @PreAuthorize("hasRole('MASTER')")
-    public ApiResponse<DeliveryResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
+    public ApiResponse<DeliveryCreateResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
 
-        DeliveryResDto response = deliveryService.createDelivery(request);
+        DeliveryCreateResDto response = deliveryService.createDelivery(request);
 
         return ApiResponse.success("배송 생성 성공", response);
     }
@@ -42,5 +39,11 @@ public class DeliveryController {
     public ApiResponse<String> deleteDelivery(@PathVariable UUID deliveryId) {
         deliveryService.deleteDelivery(deliveryId);
         return ApiResponse.success("배송 삭제 성공");
+    }
+
+    @GetMapping("/{deliveryId}")
+    public ApiResponse<DeliveryResDto> getDelivery(@PathVariable UUID deliveryId) {
+        DeliveryResDto delivery = deliveryService.getDeliveryById(deliveryId);
+        return ApiResponse.success("배송 조회 성공", delivery);
     }
 }

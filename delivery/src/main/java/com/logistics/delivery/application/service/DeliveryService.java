@@ -1,9 +1,6 @@
 package com.logistics.delivery.application.service;
 
-import com.logistics.delivery.application.dto.DeliveryCreateReqDto;
-import com.logistics.delivery.application.dto.DeliveryResDto;
-import com.logistics.delivery.application.dto.DeliveryUpdateReqDto;
-import com.logistics.delivery.application.dto.DeliveryUpdateResDto;
+import com.logistics.delivery.application.dto.*;
 import com.logistics.delivery.domain.entity.Delivery;
 import com.logistics.delivery.domain.entity.DeliveryPath;
 import com.logistics.delivery.domain.entity.Status;
@@ -50,7 +47,7 @@ public class DeliveryService {
     }
 
     @Transactional
-    public DeliveryResDto createDelivery(DeliveryCreateReqDto request) {
+    public DeliveryCreateResDto createDelivery(DeliveryCreateReqDto request) {
         // 도착 허브 ID 가져오기
         UUID destinationHubId = getVendor(request.getVendorId()).getVendorHubId();
 
@@ -85,7 +82,7 @@ public class DeliveryService {
         delivery.addDeliveryPath(deliveryPath);
         deliveryRepository.save(delivery);
 
-        return DeliveryResDto.builder()
+        return DeliveryCreateResDto.builder()
                 .deliveryId(delivery.getId())
                 .orderId(delivery.getOrderId())
                 .deliveryPathId(deliveryPath.getId())
@@ -172,7 +169,26 @@ public class DeliveryService {
 
         deliveryPath.setIsDelete();
         delivery.setIsDelete();
+    }
 
+    @Transactional
+    public DeliveryResDto getDeliveryById(UUID deliveryId) {
+        Delivery delivery = deliveryRepository.findByIdAndIsDeleteFalse(deliveryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 배송 정보를 찾을 수 없습니다: " + deliveryId));
 
+        return DeliveryResDto.builder()
+                .id(delivery.getId())
+                .orderId(delivery.getOrderId())
+                .sourceHubId(delivery.getSourceHubId())
+                .destinationHubId(delivery.getDestinationHubId())
+                .address(delivery.getAddress())
+                .recipientName(delivery.getRecipientName())
+                .slackId(delivery.getSlackId())
+                .status(delivery.getStatus())
+                .createdAt(delivery.getCreatedAt())
+                .createdBy(delivery.getCreatedBy())
+                .updatedAt(delivery.getUpdatedAt())
+                .updatedBy(delivery.getUpdatedBy())
+                .build();
     }
 }
