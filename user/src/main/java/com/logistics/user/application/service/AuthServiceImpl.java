@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,29 +22,13 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final SecretKey secretKey;
+    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${spring.application.name}")
-    private String issuer;
-
-    @Value("${service.jwt.access-expiration}")
-    private Long accessExpiration;
-
-    @Value("${service.jwt.refresh-expiration}")
-    private Long refreshExpiration;
-
-    private final String BEARER = "Bearer ";
-
-
-    public AuthServiceImpl(UserRepository userRepository, @Value("${service.jwt.secret-key}") String secretKey, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional(readOnly = true)
     @Override
@@ -89,38 +74,17 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다");
         }
 
+        String refreshToken = tokenService.createRefreshToken(user.getId(), user.getUsername(), user.getRole().getAuthority());
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", createAccessToken(user.getUsername(), user.getRole().getAuthority()));
-        headers.set("Refresh-Authorization", createRefreshToken(user.getUsername(), user.getRole().getAuthority()));
+        headers.set("Authorization", tokenService.createAccessToken(user.getUsername(), user.getRole().getAuthority()));
+        headers.set("Refresh-Authorization", refreshToken);
 
         return new ResponseEntity<>("login success", headers, HttpStatus.OK);
     }
 
 
-    // AccessToken 생성
-    public String createAccessToken(String username, String role) {
-        return BEARER + Jwts.builder()
-                .claim("X-User-Id", username)
-                .claim("X-Role", role)
-                .issuer(issuer)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
-    }
 
-    // RefreshToken 생성
-    public String createRefreshToken(String username, String role) {
-        return BEARER + Jwts.builder()
-                .subject("RefreshToken")
-                .claim("X-User-Id", username)
-                .claim("X-Role", role)
-                .issuer(issuer)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
-    }
 
 
 }
