@@ -24,8 +24,14 @@ public class DeliveryPath extends BaseEntity {
     @Column(name = "hub_delivery_manager_id", nullable = false)
     private UUID hubDeliveryManagerId; // 허브 배송 담당자
 
-    @Column(name = "vendor_delivery_manager_id", nullable = false)
+    @Column(name = "hub_delivery_manager_sequence", nullable = false)
+    private int hubDeliveryManagerSequence; // 허브 배송 담당자의 시퀀스
+
+    @Column(name = "vendor_delivery_manager_id", nullable = true)
     private UUID vendorDeliveryManagerId;  //  업체 배송 담당자
+
+    @Column(name = "vendor_delivery_manager_sequence ", nullable = true)
+    private int vendorDeliveryManagerSequence; // 업체 배송 담당자의 시퀀스
 
     @Column(name = "source_hub_id", nullable = false)
     private UUID sourceHubId; // 도착허브
