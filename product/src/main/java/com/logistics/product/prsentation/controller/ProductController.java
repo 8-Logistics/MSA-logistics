@@ -1,5 +1,6 @@
 package com.logistics.product.prsentation.controller;
 
+import com.logistics.product.application.CustomPrincipal;
 import com.logistics.product.application.dto.ApiResponse;
 import com.logistics.product.application.dto.OrderProductDto;
 import com.logistics.product.application.dto.ProductReqDto;
@@ -7,6 +8,7 @@ import com.logistics.product.application.dto.ProductUpdateReqDto;
 import com.logistics.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,10 +32,11 @@ public class ProductController {
      */
     @PreAuthorize("hasAnyAuthority('HUB_MANAGER', 'VENDOR_MANAGER', 'MASTER')")
     @PutMapping("/products/{productId}")
-    public ApiResponse<UUID> updateProduct(@PathVariable UUID productId, @RequestBody ProductUpdateReqDto request) {
-        String role = "HUB_ADMIN";
-        String userId = "123";
-        UUID updateProductId = productService.updateProduct(productId, request, userId, role);
+    public ApiResponse<UUID> updateProduct(
+            @PathVariable UUID productId,
+            @RequestBody ProductUpdateReqDto request,
+            @AuthenticationPrincipal CustomPrincipal customPrincipal) {
+        UUID updateProductId = productService.updateProduct(productId, request, customPrincipal.getUserId(), customPrincipal.getRole());
         return ApiResponse.success("상품이 수정되었습니다.",updateProductId);
     }
 
@@ -42,10 +45,8 @@ public class ProductController {
      */
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @DeleteMapping("/products/{productId}")
-    public ApiResponse deleteProduct(@PathVariable("productId") UUID productId) {
-        String role = "HUB_ADMIN";
-        String userId = "123";
-        productService.deleteProduct(productId, userId, role);
+    public ApiResponse deleteProduct(@PathVariable("productId") UUID productId, @AuthenticationPrincipal CustomPrincipal customPrincipal) {
+        productService.deleteProduct(productId, customPrincipal.getUserId(), customPrincipal.getRole());
         return ApiResponse.success("상품이 삭제되었습니다.");
     }
 

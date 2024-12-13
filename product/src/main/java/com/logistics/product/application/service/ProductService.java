@@ -23,7 +23,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final VendorFeignClient vendorFeignClient;
     private final HubFeignClient hubFeignClient;
-    @Transactional
     public UUID createProduct(ProductReqDto request) {
 
         Product product = ProductReqDto.toProduct(request);
