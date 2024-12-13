@@ -26,6 +26,6 @@ public class OrderController {
     public ApiResponse<OrderCreateResDto> createOrder(
             @RequestBody OrderCreateReqDto request, @AuthenticationPrincipal CustomPrincipal customPrincipal
     ) {
-        return ApiResponse.success("상품을 등록하였습니다.", orderService.createOrder(request,customPrincipal.getUserId()));
+        return ApiResponse.success("주문이 완료되었습니다.", orderService.createOrder(request,customPrincipal.getUserId()));
     }
 }

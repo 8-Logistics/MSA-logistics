@@ -12,8 +12,8 @@ import java.util.UUID;
 @FeignClient(name = "product-service",configuration = FeignConfig.class)
 public interface ProductFeignClient {
     @GetMapping("/api/v1/products/stock/{productId}")
-    OrderProductDto getStock(@PathVariable("productId") UUID productId);
+    OrderProductDto getProductInfo(@PathVariable("productId") UUID productId);
 
     @PutMapping("/api/v1/products/stockUpdate/{productId}/{stock}")
-    void decreaseStock(@PathVariable("productId") UUID productId, @PathVariable(name="stock") int stock);
+    void updateStock(@PathVariable("productId") UUID productId, @PathVariable(name="stock") int stock);
 }

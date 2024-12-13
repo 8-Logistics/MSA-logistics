@@ -12,4 +12,5 @@ import java.util.UUID;
 public class OrderProductDto {
     private int stock;
     private UUID productVendorId; //공급업체
+    private UUID productSourceHubId; //소속허브(출발허브)
 }
