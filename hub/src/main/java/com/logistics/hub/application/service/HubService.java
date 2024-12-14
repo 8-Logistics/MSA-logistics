@@ -2,6 +2,7 @@ package com.logistics.hub.application.service;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import com.logistics.hub.domain.entity.Hub;
 import com.logistics.hub.domain.entity.HubPath;
 import com.logistics.hub.domain.enums.SortOption;
 import com.logistics.hub.domain.repository.HubRepository;
+import com.logistics.hub.infrastructure.client.UserClient;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -94,6 +96,7 @@ public class HubService {
 	}
 
 	public Hub getHub(UUID id) {
+		log.info("###Hub checkHub Service getHub");
 		return hubRepository.findById(id).filter(hub -> !hub.isDelete())
 			.orElseThrow(() -> new IllegalArgumentException("Hub not found."));
 	}
@@ -133,6 +136,7 @@ public class HubService {
 
 	// 허브 있는지 체크 : FeignClient 호출 메서드
 	public boolean checkHub(UUID hubId) {
+		log.info("###Hub checkHub Service checkHub");
 		return getHub(hubId) != null;
 	}
 
