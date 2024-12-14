@@ -123,12 +123,12 @@ public class DeliveryService {
         switch (status) {
             case MOVING_TO_HUB:
                 deliveryManagerId = deliveryPath.getHubDeliveryManagerId();
-                deliveryManagerStatus = "배송중";
+                deliveryManagerStatus = "IN_DELIVERY"; // 배송중
                 break;
 
             case DELIVERED_TO_HUB:
                 deliveryManagerId = deliveryPath.getHubDeliveryManagerId();
-                deliveryManagerStatus = "배송대기";
+                deliveryManagerStatus = "PENDING_DELIVERY"; // 배송 대기
 
                 // 허브로 배송 완료 시점에 업체 배송 담당자 정보 저장
                 DeliveryManagerResDto vendorManager = getVendorDeliveryManager(destinationHubId);
@@ -137,12 +137,12 @@ public class DeliveryService {
 
             case MOVING_TO_VENDOR:
                 deliveryManagerId = deliveryPath.getVendorDeliveryManagerId();
-                deliveryManagerStatus = "배송중";
+                deliveryManagerStatus = "IN_DELIVERY";
                 break;
 
             case DELIVERED_TO_VENDOR:
                 deliveryManagerId = deliveryPath.getVendorDeliveryManagerId();
-                deliveryManagerStatus = "배송대기";
+                deliveryManagerStatus = "PENDING_DELIVERY";
                 break;
 
             default:

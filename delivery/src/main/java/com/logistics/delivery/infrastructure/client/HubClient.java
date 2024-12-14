@@ -10,7 +10,7 @@ import java.util.UUID;
 @FeignClient(name = "hub-service")
 public interface HubClient {
 
-    @GetMapping("/api/v1/hubs//path")
+    @GetMapping("/api/v1/hubs/path")
     HubPathResDto getExactHubPath(
             @RequestParam("sourceHubId") UUID sourceHubId,
             @RequestParam("destination_hub_id") UUID destinationHubId

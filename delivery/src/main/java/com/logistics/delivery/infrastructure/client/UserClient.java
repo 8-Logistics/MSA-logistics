@@ -12,9 +12,10 @@ import java.util.UUID;
 @FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping("/api/delivery-manager")
+    @GetMapping("/api/v1/delivery-manager")
     DeliveryManagerResDto getDeliveryManager(@RequestParam UUID destinationHubId);
 
-    @PutMapping("/api/delivery-manager/{deliveryManagerId}/updateStatus")
-    void updateDeliveryManagerStatus(@PathVariable UUID deliveryManagerId, @RequestParam("deliveryStatus") String deliveryStatus);
+    @PutMapping("/api/v1/delivery-manager/{deliveryManagerId}/updateStatus")
+    void updateDeliveryManagerStatus(@PathVariable UUID deliveryManagerId,
+                                     @RequestParam("deliveryStatus") String deliveryStatus);
 }
