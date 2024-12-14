@@ -54,7 +54,7 @@ public class HubController {
 	@PutMapping("/hubs/{hubId}/manager")
 	public ResponseEntity<String> assignHubManager(
 		@PathVariable UUID hubId,
-		@RequestParam String userId) {
+		@RequestParam int userId) {
 		hubService.assignHubManager(hubId, userId);
 		return ResponseEntity.ok("Assigned manager to hub Successful");
 	}
@@ -90,7 +90,7 @@ public class HubController {
 	}
 
 	@GetMapping("/hubs/user/{userId}")
-	public UUID getUserHubId(@PathVariable("userId") String userId) {
+	public UUID getUserHubId(@PathVariable("userId") int userId) {
 		log.info("getUserHubId Controller");
 		return hubService.getUserHubId(userId);
 	}

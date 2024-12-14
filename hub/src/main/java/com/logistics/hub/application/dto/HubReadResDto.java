@@ -18,7 +18,7 @@ public class HubReadResDto {
 	private UUID id;
 	private String name;
 	private String address;
-	private String managerId;
+	private int managerId;
 	private LocalDateTime createdAt;
 
 	public static HubReadResDto of(Hub hub) {

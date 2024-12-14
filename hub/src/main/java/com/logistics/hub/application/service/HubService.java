@@ -48,7 +48,7 @@ public class HubService {
 	}
 
 	@Transactional
-	public void assignHubManager(UUID hubId, String userId) {
+	public void assignHubManager(UUID hubId, int userId) {
 		Hub hub = getHub(hubId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setSourceHubId(hubId);
@@ -137,10 +137,10 @@ public class HubService {
 	}
 
 	// 허브 매니저ID로 소속허브ID 확인: FeignClient 호출 메서드
-	public UUID getUserHubId(String userId) {
+	public UUID getUserHubId(int userId) {
 		log.info("getUserHubId Service");
 		return hubRepository.findAll().stream()
-			.filter(hub -> hub.getManagerId().equals(userId))
+			.filter(hub -> hub.getManagerId() == userId)
 			.map(Hub::getId)
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("No hub found for userId: " + userId));
