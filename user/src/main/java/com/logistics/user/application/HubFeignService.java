@@ -6,4 +6,6 @@ public interface HubFeignService {
 
     boolean checkHub(UUID hubId);
 
+    UUID getUserHubId(Long userId);
+
 }
