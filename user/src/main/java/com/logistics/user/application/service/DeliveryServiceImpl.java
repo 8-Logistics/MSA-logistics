@@ -32,7 +32,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         User user = userRepository.findByIdAndRoleAndIsDeleteFalse(request.getUserId(), UserRole.NORMAL)
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
-        // role이 허브 매니저일때 & 배송담당자가 허브 배송담당자가 아닐때
+        // role이 허브 매니저일때 & 업체 배송 담당자
         if(role.equals(UserRole.HUB_MANAGER.toString()) && request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
 
             // Hub Manager 찾는다.
@@ -51,8 +51,20 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
         }
 
-        user.modifyRole(UserRole.DELIVERY_MANAGER);
+        // 로그인 role이 Master일때 업체 배송 담당자
+        if(request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
+            try{
+                if(!hubFeignService.checkHub(request.getSourceHubId())){
+                    throw new IllegalArgumentException("Hub Not Found");
+                }
+            }catch(Exception e){
+                // FeignError
+                throw new IllegalArgumentException("Hub Not Found");
+            }
 
+        }
+
+        user.modifyRole(UserRole.DELIVERY_MANAGER);
 
         DeliveryManager manager = deliveryManagerRepository.save(DeliveryManager.createDeliveryManager(user,
                 request.getDeliveryManagerType(), request.getSourceHubId()));
