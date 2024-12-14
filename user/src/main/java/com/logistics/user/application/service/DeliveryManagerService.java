@@ -8,9 +8,9 @@ import java.util.UUID;
 public interface DeliveryManagerService {
 
 
-    DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request);
+    DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request, String username, String role);
 
-    void deleteDeliveryManager(UUID deliveryId);
+    void deleteDeliveryManager(UUID deliveryId, String username, String role);
 
     void updateDeliveryStatus(UUID deliveryManagerId, String deliveryStatus);
 }

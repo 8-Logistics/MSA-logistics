@@ -27,19 +27,32 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     @Transactional
     @Override
-    public DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request) {
+    public DeliveryManagerSearchResDto approveDeliveryManager(DeliveryManagerCreateReqDto request, String username, String role) {
 
         User user = userRepository.findByIdAndRoleAndIsDeleteFalse(request.getUserId(), UserRole.NORMAL)
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
+        // role이 허브 매니저일때 & 배송담당자가 허브 배송담당자가 아닐때
+        if(role.equals(UserRole.HUB_MANAGER.toString()) && request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
+
+            // Hub Manager 찾는다.
+            User HubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
+                    .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
+
+            try{
+                // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
+                if(!hubFeignService.getUserHubId(HubManageruser.getId()).equals(request.getSourceHubId())){
+                    throw new IllegalArgumentException("다른 허브의 배송 담당자 입니다.");
+                }
+            }catch(Exception e){
+                // FeignError
+                throw new IllegalArgumentException("허브 매니저가 없습니다.");
+            }
+
+        }
+
         user.modifyRole(UserRole.DELIVERY_MANAGER);
 
-        if(request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
-
-            if(!hubFeignService.checkHub(request.getSourceHubId())){
-                throw new IllegalArgumentException("Hub Not Found");
-            }
-        }
 
         DeliveryManager manager = deliveryManagerRepository.save(DeliveryManager.createDeliveryManager(user,
                 request.getDeliveryManagerType(), request.getSourceHubId()));
@@ -49,10 +62,22 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     @Transactional
     @Override
-    public void deleteDeliveryManager(UUID deliveryManagerId) {
+    public void deleteDeliveryManager(UUID deliveryManagerId, String username, String role) {
 
         DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
+
+        // role이 허브 매니저일때 & 배송담당자가 허브 배송담당자가 아닐때
+        if(role.equals(UserRole.HUB_MANAGER.toString()) && deliveryManager.getSourceHubId() != null){
+
+            User user = userRepository.findByUsernameAndIsDeleteFalse(username)
+                    .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
+
+            if(!hubFeignService.getUserHubId(user.getId()).equals(deliveryManager.getSourceHubId())){
+                throw new IllegalArgumentException("다른 허브의 배송 담당자 입니다.");
+            }
+
+        }
 
         if(deliveryManager.getDeliveryStatus() == DeliveryStatus.IN_DELIVERY){
             throw new IllegalArgumentException("배송중인 배송담당자 입니다. 추후에 다시 요청하세요");
