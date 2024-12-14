@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByIdAndIsDeleteFalse(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
-        return OrderUserDto.toResponse(user.getName(), user.getSlackId());
+        return OrderUserDto.toResponse(user.getName(), user.getSlackId(), user.getEmail());
     }
 
 

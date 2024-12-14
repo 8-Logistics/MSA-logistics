@@ -11,11 +11,13 @@ public class OrderUserDto {
 
     private String name;
     private String slackId;
+    private String email;
 
-    public static OrderUserDto toResponse(String name, String slackId) {
+    public static OrderUserDto toResponse(String name, String slackId, String email) {
         return OrderUserDto.builder()
                 .name(name)
                 .slackId(slackId)
+                .email(email)
                 .build();
     }
 }
