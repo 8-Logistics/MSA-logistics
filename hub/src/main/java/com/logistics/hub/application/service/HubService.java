@@ -40,9 +40,6 @@ public class HubService {
 	private final HubRepository hubRepository;
 	private final UserService userService;
 
-	@Autowired
-	private UserClient userClient;
-
 	@CachePut(cacheNames = "hubCache", key = "#result.id")
 	public HubCreateResDTO createHub(HubCreateReqDTO request) {
 		Hub hub = Hub.create(request);
@@ -65,7 +62,6 @@ public class HubService {
 
 	@Transactional
 	public void deleteHub(UUID hubId, String userRole, String userId) {
-		//to do : userRole 마스터 검증
 		Hub hub = getHub(hubId);
 		if (hub.isDelete()){
 			throw new IllegalStateException("This hub is already deleted.");
@@ -74,14 +70,16 @@ public class HubService {
 	}
 
 	@Transactional
-	public void assignHubManager(UUID hubId, int userId) {
+	public void assignHubManager(UUID hubId, long userId) {
 		Hub hub = getHub(hubId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setSourceHubId(hubId);
 		try {
-			userClient.updateUserRole(userId, dto);
+			if (!userService.updateUserRole(userId, dto)) {
+				throw new IllegalStateException("User role update failed: Service returned false");
+			}
 		} catch (FeignException e) {
-			throw new IllegalArgumentException("Failed to update user role", e);
+			throw new IllegalArgumentException("Failed to update user role due to external service error", e);
 		}
 		hub.assignHubManager(userId);
 	}
