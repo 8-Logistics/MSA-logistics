@@ -1,20 +1,24 @@
 package com.logistics.product.application.service;
 
-import com.logistics.product.application.dto.OrderProductResDto;
-import com.logistics.product.application.dto.ProductReqDto;
-import com.logistics.product.application.dto.ProductResDto;
-import com.logistics.product.application.dto.ProductUpdateReqDto;
+import com.logistics.product.application.dto.*;
 import com.logistics.product.domain.entity.Product;
 import com.logistics.product.domain.repository.ProductRepository;
 import com.logistics.product.infrastructure.feign.HubFeignClient;
 import com.logistics.product.infrastructure.feign.VendorFeignClient;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
+
+import static com.logistics.product.domain.entity.QProduct.product;
 
 @Service
 @RequiredArgsConstructor
@@ -96,5 +100,23 @@ public class ProductService {
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
         product.setStock(stock);
+    }
+
+    public ProductResDto retrieveProduct(UUID productId) {
+        Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        return ProductResDto.from(product);
+    }
+
+    public ProductSearchResDto searchProduct(List<UUID> idList, Predicate predicate, Pageable pageable) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder(predicate);
+        if (idList != null && !idList.isEmpty()) {
+            booleanBuilder.and(product.productId.in(idList));
+        }
+        booleanBuilder.and(product.stock.gt(0));
+        booleanBuilder.and(product.isDelete.eq(false));
+        Page<Product> productEntityPage = productRepository.findAll(booleanBuilder, pageable);
+        return ProductSearchResDto.of(productEntityPage);
     }
 }

@@ -1,16 +1,20 @@
 package com.logistics.product.prsentation.controller;
 
 import com.logistics.product.application.CustomPrincipal;
-import com.logistics.product.application.dto.ApiResponse;
-import com.logistics.product.application.dto.OrderProductResDto;
-import com.logistics.product.application.dto.ProductReqDto;
-import com.logistics.product.application.dto.ProductUpdateReqDto;
+import com.logistics.product.application.dto.*;
 import com.logistics.product.application.service.ProductService;
+import com.logistics.product.domain.entity.Product;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,6 +53,27 @@ public class ProductController {
         productService.deleteProduct(productId, customPrincipal.getUserId(), customPrincipal.getRole());
         return ApiResponse.success("상품이 삭제되었습니다.");
     }
+
+    /**
+     * 상품 단건 조회
+     */
+    @GetMapping("/products/{productId}")
+    public ApiResponse<ProductResDto> retrieveProduct(@PathVariable("productId") UUID productId) {
+        return ApiResponse.success("상품이 조회되었습니다.", productService.retrieveProduct(productId));
+    }
+
+    /**
+     * 상품 검색
+     */
+    @GetMapping("/products/search")
+    public ApiResponse<ProductSearchResDto> searchProduct(
+            @RequestParam(required = false) List<UUID> idList,
+            @QuerydslPredicate(root = Product.class) Predicate predicate,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ){
+        return ApiResponse.success("검색하신 상품 조회되었습니다.", productService.searchProduct(idList, predicate, pageable));
+    }
+
 
     /**
      * Feign Client

@@ -27,6 +27,7 @@ public class ProductResDto {
                 .vendorId(product.getVendorId())
                 .hubId(product.getHubId())
                 .stock(product.getStock())
+                .price(product.getPrice())
                 .description(product.getDescription())
                 .build();
     }
