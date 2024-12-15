@@ -1,10 +1,7 @@
 package com.logistics.user.application.service;
 
 import com.logistics.user.application.HubFeignService;
-import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
-import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
-import com.logistics.user.application.dto.DeliveryManagerUpdateReqDto;
-import com.logistics.user.application.dto.DeliverySequenceDto;
+import com.logistics.user.application.dto.*;
 import com.logistics.user.domain.entity.DeliveryManager;
 import com.logistics.user.domain.entity.User;
 import com.logistics.user.domain.enums.DeliveryManagerType;
@@ -13,6 +10,8 @@ import com.logistics.user.domain.enums.UserRole;
 import com.logistics.user.domain.repository.DeliveryManagerRepository;
 import com.logistics.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +36,12 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         if(role.equals(UserRole.HUB_MANAGER.toString()) && request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
 
             // Hub Manager 찾는다.
-            User HubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
+            User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
                     .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
 
             try{
                 // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
-                if(!hubFeignService.getUserHubId(HubManageruser.getId()).equals(request.getSourceHubId())){
+                if(!hubFeignService.getUserHubId(hubManageruser.getId()).equals(request.getSourceHubId())){
                     throw new IllegalArgumentException("다른 허브의 배송 담당자 입니다.");
                 }
             }catch(Exception e){
@@ -225,5 +224,29 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         deliveryManager.updateDeliveryStatus(DeliveryStatus.PENDING_DELIVERY.getDescription());
 
         return DeliveryManagerSearchResDto.toResponse(deliveryManager);
+    }
+
+    @Override
+    public Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
+            DeliveryManagerSearchReqDto request, Pageable pageable, String username, String role) {
+
+        if(role.equals(UserRole.HUB_MANAGER.getAuthority()) && request.getHubIdList().size() == 1){
+
+            User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
+                    .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
+
+            try{
+                // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
+                if(!hubFeignService.getUserHubId(hubManageruser.getId()).equals(request.getHubIdList().get(0))){
+                    throw new IllegalArgumentException("자기 자신의 허브만 검색할 수 있습니다.");
+                }
+            }catch(Exception e){
+                // FeignError
+                throw new IllegalArgumentException("[Feign] Hub Feign Error");
+            }
+
+        }
+
+        return deliveryManagerRepository.getDeliveryManagerSearch(request, pageable, username, role);
     }
 }

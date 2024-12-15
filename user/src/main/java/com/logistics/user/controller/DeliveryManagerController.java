@@ -1,12 +1,11 @@
 package com.logistics.user.controller;
 
 import com.logistics.user.application.CustomPrincipal;
-import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
-import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
-import com.logistics.user.application.dto.DeliveryManagerUpdateReqDto;
-import com.logistics.user.application.dto.DeliverySequenceDto;
+import com.logistics.user.application.dto.*;
 import com.logistics.user.application.service.DeliveryManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -69,7 +68,19 @@ public class DeliveryManagerController {
         DeliveryManagerSearchResDto response = deliveryManagerService.modifyDeliveryManager(deliveryManagerId, request,
                 principal.getUserId(), principal.getRole());
 
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/delivery-manager/search")
+    public ResponseEntity<Page<DeliveryManagerSearchResDto>>
+                    getDeliveryManagerSearch(DeliveryManagerSearchReqDto request,
+                    Pageable pageable,
+                    @AuthenticationPrincipal CustomPrincipal principal
+        ){
+
+        Page<DeliveryManagerSearchResDto> response = deliveryManagerService
+                                        .getDeliveryManagerSearch(request, pageable, principal.getUserId(), principal.getRole());
+
+        return ResponseEntity.ok(response);
+    }
 }
