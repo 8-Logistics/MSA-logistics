@@ -47,7 +47,7 @@ public class VendorService {
 	}
 
 	@Transactional
-	public void assignVendorManager(UUID vendorId, String userId) {
+	public void assignVendorManager(UUID vendorId, int userId) {
 		Vendor vendor = getVendor(vendorId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setVendorId(vendorId);

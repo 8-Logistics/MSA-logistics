@@ -54,7 +54,7 @@ public class VendorController {
 	@PutMapping("/vendors/{vendorId}/manager")
 	public ResponseEntity<String> assignVendorManager(
 		@PathVariable UUID vendorId,
-		@RequestBody String userId) {
+		@RequestBody int userId) {
 		vendorService.assignVendorManager(vendorId, userId);
 		return ResponseEntity.ok("Assigned manager to Vendor Successful");
 	}

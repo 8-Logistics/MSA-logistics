@@ -21,7 +21,7 @@ public class VendorReadResDTO {
 	private VendorType vendorType;
 	private UUID sourceHubId;
 	private String address;
-	private String managerId;
+	private int managerId;
 	private LocalDateTime updatedAt;
 
 	public static VendorReadResDTO of(Vendor vendor) {
