@@ -15,13 +15,13 @@ public class DeliveryManagerSearchResDto {
     private String deliveryManagerId;
     private String deliveryManagerType;
     private String sourceHubId;
-    private Integer deliverySequence;
+    private long deliverySequence;
     private String deliveryStatus;
 
 
     public static DeliveryManagerSearchResDto toResponse(DeliveryManager deliveryManager) {
         return DeliveryManagerSearchResDto.builder()
-                .deliveryManagerId(deliveryManager.getDeliveryManagerId().toString())
+                .deliveryManagerId(deliveryManager.getId().toString())
                 .deliveryManagerType(deliveryManager.getDeliveryManagerType().toString())
                 .sourceHubId(deliveryManager.getSourceHubId().toString())
                 .deliverySequence(deliveryManager.getDeliverySequence())

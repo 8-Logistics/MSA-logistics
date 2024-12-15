@@ -50,7 +50,15 @@ public class DeliveryManagerController {
         return deliveryManagerService.getDeliverySequence(hubId, deliverySequence);
     }
 
+    // 배송 담당자 단건 조회
+    @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
+    @GetMapping("/delivery-manager/{deliveryManagerId}")
+    public ResponseEntity<DeliveryManagerSearchResDto> getDeliveryManager(@PathVariable UUID deliveryManagerId){
 
+        DeliveryManagerSearchResDto response = deliveryManagerService.getDeliveryManager(deliveryManagerId);
+
+        return ResponseEntity.ok(response);
+    }
 
 
 }

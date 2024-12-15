@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -113,6 +112,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         deliveryManager.updateDeliveryStatus(deliveryStatus);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public DeliverySequenceDto getDeliverySequence(UUID hubId, long deliverySequence) {
 
@@ -132,5 +132,15 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
                 .orElseThrow(() -> new IllegalArgumentException("배송이 가능한 업체 배송 담당자가 없습니다."));
 
         return DeliverySequenceDto.toResponse(deliveryManager.getId(), deliveryManager.getDeliverySequence());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public DeliveryManagerSearchResDto getDeliveryManager(UUID deliveryManagerId) {
+
+        DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
+                .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
+
+        return DeliveryManagerSearchResDto.toResponse(deliveryManager);
     }
 }
