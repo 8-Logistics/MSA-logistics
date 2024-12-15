@@ -47,14 +47,16 @@ public class VendorService {
 	}
 
 	@Transactional
-	public void assignVendorManager(UUID vendorId, int userId) {
+	public void assignVendorManager(UUID vendorId, long userId) {
 		Vendor vendor = getVendor(vendorId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setVendorId(vendorId);
 		try {
-			userService.updateUserRole(userId, dto);
+			if (!userService.updateUserRole(userId, dto)) {
+				throw new IllegalStateException("User role update failed: Service returned false");
+			}
 		} catch (FeignException e) {
-			throw new IllegalArgumentException("Failed to update user role", e);
+			throw new IllegalArgumentException("Failed to update user role due to external service error", e);
 		}
 		vendor.assignVendorManager(userId);
 	}
