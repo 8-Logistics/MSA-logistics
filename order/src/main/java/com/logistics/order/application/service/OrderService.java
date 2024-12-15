@@ -8,12 +8,21 @@ import com.logistics.order.infrastructure.client.DeliveryFeignClient;
 import com.logistics.order.infrastructure.client.ProductFeignClient;
 import com.logistics.order.infrastructure.client.UserFeignClient;
 import com.logistics.order.infrastructure.client.VendorFeignClient;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import static com.logistics.order.domain.entity.QOrder.order;
+
+import java.util.List;
 import java.util.UUID;
 @Service
 @Slf4j
@@ -69,5 +78,22 @@ public class OrderService {
         }
 
         return OrderCreateResDto.from(orderRepository.save(order));
+    }
+
+    public OrderRetrieveResDto retrieveOrder(UUID orderId) {
+        Order order = (Order) orderRepository.findByOrderIdAndIsDeleteFalse(orderId).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        return OrderRetrieveResDto.from(order);
+    }
+
+    public OrderSearchResDto searchOrder(List<UUID> idList, Predicate predicate, Pageable pageable) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder(predicate);
+        if (idList != null && !idList.isEmpty()) {
+            booleanBuilder.and(order.orderId.in(idList));
+        }
+        booleanBuilder.and(order.isDelete.eq(false));
+        Page<Order> orderEntityPage = orderRepository.findAll(booleanBuilder, pageable);
+        return OrderSearchResDto.of(orderEntityPage);
     }
 }
