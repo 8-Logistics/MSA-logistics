@@ -1,10 +1,10 @@
-package com.logistics.hub.infrastructure.client;
+package com.logistics.vendor.infrastructure.client;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.logistics.hub.application.service.CustomPrincipal;
+import com.logistics.vendor.application.service.CustomPrincipal;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

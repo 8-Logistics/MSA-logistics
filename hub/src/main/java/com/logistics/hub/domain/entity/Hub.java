@@ -60,6 +60,7 @@ public class Hub extends BaseEntity {
 			.address(dto.getAddress())
 			.latitude(dto.getLatitude())
 			.longitude(dto.getLongitude())
+			.isDelete(false)
 			.build();
 	}
 
