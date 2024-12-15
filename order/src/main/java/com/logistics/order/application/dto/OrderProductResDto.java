@@ -9,8 +9,9 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderProductDto {
+public class OrderProductResDto {
     private int stock;
     private UUID productVendorId; //공급업체
     private UUID productSourceHubId; //소속허브(출발허브)
+    private String productName;
 }

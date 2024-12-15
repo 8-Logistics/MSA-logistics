@@ -1,6 +1,7 @@
 package com.logistics.order.application.service;
 
 import com.logistics.order.application.dto.*;
+import com.logistics.order.application.dto.ai.OrderToAiReqDto;
 import com.logistics.order.domain.entity.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.infrastructure.client.DeliveryFeignClient;
@@ -28,48 +29,45 @@ public class OrderService {
     private UserFeignClient userFeignClient;
     @Autowired
     private VendorFeignClient vendorFeignClient;
+    private SlackService slackService;
 
     @Transactional
     public OrderCreateResDto createOrder(OrderCreateReqDto request, String userId) {
         Order order = OrderCreateReqDto.toOrder(request);
         int quantity = request.getQuantity();
 
-        OrderProductDto orderProductDto = productFeignClient.getProductInfo(order.getProductId());
+        OrderProductResDto orderProductResDto = productFeignClient.getProductInfo(order.getProductId());
 
-        if(orderProductDto.getStock() >= quantity) {
-            productFeignClient.updateStock(order.getProductId(), orderProductDto.getStock() - quantity);
+        if(orderProductResDto.getStock() >= quantity) {
+            productFeignClient.updateStock(order.getProductId(), orderProductResDto.getStock() - quantity);
         }else {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
 
         // productVendorId로 vendor에 요청 > vendorId(업체) 주소 받기
-        String productVendorAddress = vendorFeignClient.getVendorAddress(orderProductDto.getProductVendorId());
+        String productVendorAddress = vendorFeignClient.getVendorAddress(orderProductResDto.getProductVendorId());
 
-        // userId로 user에 배송담당자에 요청 > userId로 유저 이름, slackId 받기
-        OrderUserDto orderUserDto = userFeignClient.getUserInfo(userId);
+        // Todo : userId로 user에 배송담당자에 요청 > userId로 유저 이름, slackId 받기 (배달 정보에서 담당자Id 받을 수 있는지 확인)
+        // deliveryId로 user > user 이름, 메일 주소 가져오기
+        OrderUserResDto orderUserDto = userFeignClient.getUserInfo(userId);
 
+        OrderToDeliveryReqDto orderToDeliveryReqDto = OrderToDeliveryReqDto.from(order, orderProductResDto, productVendorAddress, orderUserDto);
 
-        OrderToDeliveryDto orderToDeliveryDto = new OrderToDeliveryDto(
-                order.getOrderId(),
-                orderProductDto.getProductSourceHubId(),
-                orderProductDto.getProductVendorId(),
-                productVendorAddress,
-                orderUserDto.getUserName(),
-                orderUserDto.getSlackId());
-
-        UUID deliveryId;
 
         try {
-            deliveryId = deliveryFeignClient.createDelivery(orderToDeliveryDto);
-            order = order.createOrder(order, orderProductDto, userId, deliveryId);
+            OrderDeliveryResDto orderDeliveryResDto = deliveryFeignClient.createDelivery(orderToDeliveryReqDto);
+            order = order.createOrder(order, orderProductResDto, userId, orderDeliveryResDto);
+
+            OrderToAiReqDto orderToAiReqDto = OrderToAiReqDto.from(order, orderUserDto, productVendorAddress, orderDeliveryResDto);
+
+            slackService.sendSlack(orderToAiReqDto);
 
         }catch (Exception e) {
             // 오류 발생 시 기존 재고로 재업데이트
-            productFeignClient.updateStock(order.getProductId(), orderProductDto.getStock());
+            productFeignClient.updateStock(order.getProductId(), orderProductResDto.getStock());
             throw new IllegalArgumentException("배송 등록 중 오류가 발생하였습니다.");
         }
 
-        // Todo 슬랙 서비스 호출
         return OrderCreateResDto.from(orderRepository.save(order));
     }
 }

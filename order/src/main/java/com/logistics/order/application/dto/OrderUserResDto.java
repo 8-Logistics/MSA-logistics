@@ -7,7 +7,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderUserDto {
+public class OrderUserResDto {
     private String userName;
     private String slackId;
+    private String email;
 }
