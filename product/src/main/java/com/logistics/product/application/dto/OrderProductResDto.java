@@ -10,16 +10,18 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderProductDto {
+public class OrderProductResDto {
     private int stock;
     private UUID productVendorId;
     private UUID productSourceHubId;
+    private String productName;
 
-    public static OrderProductDto from(Product product) {
-        return OrderProductDto.builder()
+    public static OrderProductResDto from(Product product) {
+        return OrderProductResDto.builder()
                 .stock(product.getStock())
                 .productVendorId(product.getVendorId())
                 .productSourceHubId(product.getHubId())
+                .productName(product.getName())
                 .build();
     }
 

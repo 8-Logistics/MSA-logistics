@@ -2,7 +2,7 @@ package com.logistics.product.prsentation.controller;
 
 import com.logistics.product.application.CustomPrincipal;
 import com.logistics.product.application.dto.ApiResponse;
-import com.logistics.product.application.dto.OrderProductDto;
+import com.logistics.product.application.dto.OrderProductResDto;
 import com.logistics.product.application.dto.ProductReqDto;
 import com.logistics.product.application.dto.ProductUpdateReqDto;
 import com.logistics.product.application.service.ProductService;
@@ -55,7 +55,7 @@ public class ProductController {
      */
 
     @GetMapping("/products/stock/{productId}")
-    public OrderProductDto getProductInfo(@PathVariable(name="productId") UUID productId){
+    public OrderProductResDto getProductInfo(@PathVariable(name="productId") UUID productId){
         return productService.getProductInfo(productId);
     }
 

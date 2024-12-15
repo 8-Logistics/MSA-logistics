@@ -1,6 +1,6 @@
 package com.logistics.product.application.service;
 
-import com.logistics.product.application.dto.OrderProductDto;
+import com.logistics.product.application.dto.OrderProductResDto;
 import com.logistics.product.application.dto.ProductReqDto;
 import com.logistics.product.application.dto.ProductResDto;
 import com.logistics.product.application.dto.ProductUpdateReqDto;
@@ -83,11 +83,11 @@ public class ProductService {
         product.softDelete(userId);
     }
 
-    public OrderProductDto getProductInfo(UUID productId) {
+    public OrderProductResDto getProductInfo(UUID productId) {
         Product product = productRepository.findByProductIdAndIsDeleteFalse(productId).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
-        return OrderProductDto.from(product);
+        return OrderProductResDto.from(product);
     }
 
     @Transactional
