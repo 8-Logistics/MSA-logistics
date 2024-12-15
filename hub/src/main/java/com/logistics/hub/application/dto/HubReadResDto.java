@@ -23,6 +23,7 @@ public class HubReadResDto {
 	private String name;
 	private String address;
 	private int managerId;
+
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime createdAt;
