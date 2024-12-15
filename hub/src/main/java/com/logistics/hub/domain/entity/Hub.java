@@ -1,5 +1,7 @@
 package com.logistics.hub.domain.entity;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -95,11 +97,6 @@ public class Hub extends BaseEntity {
 	public HubPath updateOutboundPath(UUID pathId, Double newDistance, LocalTime newEstimatedTime) {
 		HubPath path = findOutboundPathById(pathId);
 		path.updatePath(newDistance, newEstimatedTime);
-		return path;
-	}
-
-	public HubPath addOutboundPath(HubPath path) {
-		this.outboundPaths.add(path);
 		return path;
 	}
 

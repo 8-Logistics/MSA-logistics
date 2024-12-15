@@ -67,7 +67,7 @@ public class HubService {
 	public void deleteHub(UUID hubId, String userRole, String userId) {
 		//to do : userRole 마스터 검증
 		Hub hub = getHub(hubId);
-		if (hub.isDeleted()){
+		if (hub.isDelete()){
 			throw new IllegalStateException("This hub is already deleted.");
 		}
 		hub.delete(userId);
