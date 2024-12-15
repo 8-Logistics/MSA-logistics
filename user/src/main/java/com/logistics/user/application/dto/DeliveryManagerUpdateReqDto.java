@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -13,7 +15,5 @@ import lombok.NoArgsConstructor;
 public class DeliveryManagerUpdateReqDto {
 
     private DeliveryManagerType deliveryManagerType;
-    private Long userId;
-    private String sourceHubId;
-    private Integer deliverySequence;
+    private UUID sourceHubId;
 }

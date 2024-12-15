@@ -28,6 +28,7 @@ public class DeliveryManager extends BaseEntity {
     private User user;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private DeliveryManagerType deliveryManagerType;
 
     @Column(nullable = true)
@@ -55,9 +56,20 @@ public class DeliveryManager extends BaseEntity {
 
         if(DeliveryStatus.PENDING_DELIVERY.toString().equals(deliveryStatus)){
             this.deliveryStatus = DeliveryStatus.PENDING_DELIVERY;
+        }else{
+            this.deliveryStatus = DeliveryStatus.IN_DELIVERY;
         }
 
-        this.deliveryStatus = DeliveryStatus.IN_DELIVERY;
     }
 
+    public void deliveryManagerTypeAndHubId(DeliveryManagerType deliveryManagerType, UUID sourceHubId){
+
+        this.deliveryManagerType = deliveryManagerType;
+        this.sourceHubId = sourceHubId;
+
+    }
+
+    public void resetDeliverySequence() {
+        this.deliverySequence = 0;
+    }
 }

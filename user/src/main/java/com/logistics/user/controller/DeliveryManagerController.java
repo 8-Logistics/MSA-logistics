@@ -3,6 +3,7 @@ package com.logistics.user.controller;
 import com.logistics.user.application.CustomPrincipal;
 import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
+import com.logistics.user.application.dto.DeliveryManagerUpdateReqDto;
 import com.logistics.user.application.dto.DeliverySequenceDto;
 import com.logistics.user.application.service.DeliveryManagerService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class DeliveryManagerController {
         return deliveryManagerService.getDeliverySequence(hubId, deliverySequence);
     }
 
-    // 배송 담당자 단건 조회
+    // 배송 담당자 단건 조회 API
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<DeliveryManagerSearchResDto> getDeliveryManager(@PathVariable UUID deliveryManagerId){
@@ -60,5 +61,15 @@ public class DeliveryManagerController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
+    @PutMapping("/delivery-manager/{deliveryManagerId}")
+    public ResponseEntity<?> modifyDeliveryManager(@PathVariable UUID deliveryManagerId, @RequestBody DeliveryManagerUpdateReqDto request,
+                @AuthenticationPrincipal CustomPrincipal principal){
+
+        DeliveryManagerSearchResDto response = deliveryManagerService.modifyDeliveryManager(deliveryManagerId, request,
+                principal.getUserId(), principal.getRole());
+
+        return ResponseEntity.ok("");
+    }
 
 }

@@ -2,6 +2,7 @@ package com.logistics.user.application.service;
 
 import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
+import com.logistics.user.application.dto.DeliveryManagerUpdateReqDto;
 import com.logistics.user.application.dto.DeliverySequenceDto;
 
 import java.util.UUID;
@@ -18,4 +19,7 @@ public interface DeliveryManagerService {
     DeliverySequenceDto getDeliverySequence(UUID hubId, long deliverySequence);
 
     DeliveryManagerSearchResDto getDeliveryManager(UUID deliveryManagerId);
+
+    DeliveryManagerSearchResDto modifyDeliveryManager(UUID deliveryManagerId, DeliveryManagerUpdateReqDto request
+                , String username, String role);
 }
