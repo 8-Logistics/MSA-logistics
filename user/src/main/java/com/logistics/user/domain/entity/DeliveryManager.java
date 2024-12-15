@@ -36,7 +36,8 @@ public class DeliveryManager extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING_DELIVERY;
 
-    private int deliverySequence;
+    @Column(nullable = false)
+    private long deliverySequence;
 
     public static DeliveryManager createDeliveryManager(User user, DeliveryManagerType type, UUID sourceHubId){
         return DeliveryManager.builder()

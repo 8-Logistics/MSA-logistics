@@ -3,6 +3,7 @@ package com.logistics.user.controller;
 import com.logistics.user.application.CustomPrincipal;
 import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
+import com.logistics.user.application.dto.DeliverySequenceDto;
 import com.logistics.user.application.service.DeliveryManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,20 @@ public class DeliveryManagerController {
         return ResponseEntity.ok("배송담당자가 삭제되었습니다.");
     }
 
-    // [Feign] 배송 상테 update API
+    // [Feign] 배송 상태 update API
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER')")
     @PutMapping("/delivery-manager/{deliveryManagerId}/updateStatus")
     public void updateDeliveryStatus(@PathVariable UUID deliveryManagerId, @RequestParam("deliveryStatus")
                                                   String deliveryStatus){
         deliveryManagerService.updateDeliveryStatus(deliveryManagerId, deliveryStatus);
     }
+
+    // [Feign] 배송 sequence return API
+    @GetMapping("/delivery-manager/deliverySequence")
+    public DeliverySequenceDto getDeliverySequence(@RequestParam("hubId") UUID hubId, @RequestParam("deliverySequence") long deliverySequence){
+        return deliveryManagerService.getDeliverySequence(hubId, deliverySequence);
+    }
+
 
 
 

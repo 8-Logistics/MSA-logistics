@@ -3,6 +3,7 @@ package com.logistics.user.application.service;
 import com.logistics.user.application.HubFeignService;
 import com.logistics.user.application.dto.DeliveryManagerCreateReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
+import com.logistics.user.application.dto.DeliverySequenceDto;
 import com.logistics.user.domain.entity.DeliveryManager;
 import com.logistics.user.domain.entity.User;
 import com.logistics.user.domain.enums.DeliveryManagerType;
@@ -110,5 +111,26 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         }
 
         deliveryManager.updateDeliveryStatus(deliveryStatus);
+    }
+
+    @Override
+    public DeliverySequenceDto getDeliverySequence(UUID hubId, long deliverySequence) {
+
+        // 허브 배송담당자
+        if(hubId == null){
+            DeliveryManager deliveryManager = deliveryManagerRepository
+                    .findTopBySourceHubIdIsNullAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc(deliverySequence)
+                    .orElseThrow(() -> new IllegalArgumentException("배송이 가능한 허브 배송 담당자가 없습니다."));
+
+            return DeliverySequenceDto.toResponse(deliveryManager.getId(), deliveryManager.getDeliverySequence());
+
+        }
+
+        // 업체 배송 담당자
+        DeliveryManager deliveryManager = deliveryManagerRepository
+                .findTopBySourceHubIdAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc(hubId, deliverySequence)
+                .orElseThrow(() -> new IllegalArgumentException("배송이 가능한 업체 배송 담당자가 없습니다."));
+
+        return DeliverySequenceDto.toResponse(deliveryManager.getId(), deliveryManager.getDeliverySequence());
     }
 }
