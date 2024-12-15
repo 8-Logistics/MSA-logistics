@@ -60,6 +60,17 @@ public class HubService {
 		Hub hub = getHub(hubId);
 		hub.update(request);
 		return HubUpdateResDTO.of(hub);
+
+	}
+
+	@Transactional
+	public void deleteHub(UUID hubId, String userRole, String userId) {
+		//to do : userRole 마스터 검증
+		Hub hub = getHub(hubId);
+		if (hub.isDeleted()){
+			throw new IllegalStateException("This hub is already deleted.");
+		}
+		hub.delete(userId);
 	}
 
 	@Transactional
