@@ -22,6 +22,7 @@ public class VendorReadResDTO {
 	private UUID sourceHubId;
 	private String address;
 	private long managerId;
+
 	private LocalDateTime updatedAt;
 
 	public static VendorReadResDTO of(Vendor vendor) {
