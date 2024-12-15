@@ -11,10 +11,10 @@ import com.logistics.hub.infrastructure.config.FeignConfig;
 
 @FeignClient(name = "user-service", configuration = FeignConfig.class)
 public interface UserClient extends UserService {
-	// 허브 매니져로 롤 변경
+
 	@PutMapping("/api/v1/users/{userId}/role")
 	boolean updateUserRole(
-		@PathVariable("userId") String userId,
+		@PathVariable("userId") int userId,
 		@RequestBody UserRoleUpdateDto request
 	);
 

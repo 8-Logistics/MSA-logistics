@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.logistics.hub.domain.entity.HubPath;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +25,8 @@ public class HubPathUpdateResDTO {
 	private UUID destinationHubId;
 	private Double distance;
 	private LocalTime estimatedTime;
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime updatedAt;
 
 	public static HubPathUpdateResDTO of(HubPath hubPath) {
