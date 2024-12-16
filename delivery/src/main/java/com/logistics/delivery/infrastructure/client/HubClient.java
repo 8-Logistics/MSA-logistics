@@ -15,7 +15,7 @@ public interface HubClient {
     @GetMapping("/api/v1/hubs/path")
     HubPathResDto getExactHubPath(
             @RequestParam("sourceHubId") UUID sourceHubId,
-            @RequestParam("destination_hub_id") UUID destinationHubId
+            @RequestParam("destinationHubId") UUID destinationHubId
     );
 
     @GetMapping("/api/v1/hubs/{hubId}")

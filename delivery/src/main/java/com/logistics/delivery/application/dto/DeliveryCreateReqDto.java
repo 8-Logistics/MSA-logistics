@@ -23,7 +23,7 @@ public class DeliveryCreateReqDto {
     private final String address; // 배송지 주소
 
     @NotBlank
-    private final String recipientName; // 수령인 이름
+    private final String userName; // 수령인 이름
 
     @NotBlank
     private final String slackId; // 수령인의 Slack ID

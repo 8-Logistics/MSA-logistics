@@ -50,7 +50,7 @@ public class DeliveryService {
 
     // 허브 배송 담당자 정보 가져오기
     public DeliveryManagerResDto getHubDeliveryManager() {
-        return userClient.getDeliveryManager(null); // destinationHubId 없이 호출
+        return userClient.getDeliveryManagerWithNull(); // destinationHubId 없이 호출
     }
 
     // 업체 배송 담당자 정보 가져오기
@@ -61,7 +61,7 @@ public class DeliveryService {
     @Transactional
     public DeliveryCreateResDto createDelivery(DeliveryCreateReqDto request) {
         // 도착 허브 ID 가져오기
-        UUID destinationHubId = getVendor(request.getVendorId()).getVendorHubId();
+        UUID destinationHubId = getVendor(request.getVendorId()).getSourceHubId();
 
         //  허브 배송 담당자 정보 가져오기
         DeliveryManagerResDto hubManager = getHubDeliveryManager();
@@ -75,7 +75,7 @@ public class DeliveryService {
                 .sourceHubId(request.getSourceHubId())
                 .destinationHubId(destinationHubId)
                 .address(request.getAddress())
-                .recipientName(request.getRecipientName())
+                .recipientName(request.getUserName())
                 .slackId(request.getSlackId())
                 .status(Status.PENDING)
                 .build();

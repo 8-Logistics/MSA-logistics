@@ -13,7 +13,10 @@ import java.util.UUID;
 public interface UserClient {
 
     @GetMapping("/api/v1/delivery-manager/deliverySequence")
-    DeliveryManagerResDto getDeliveryManager(@RequestParam UUID destinationHubId);
+    DeliveryManagerResDto getDeliveryManager(@RequestParam(required = false) UUID hubId);
+
+    @GetMapping("/api/v1/delivery-manager/deliverySequence")
+    DeliveryManagerResDto getDeliveryManagerWithNull();
 
     @PutMapping("/api/v1/delivery-manager/{deliveryManagerId}/updateStatus")
     void updateDeliveryManagerStatus(@PathVariable UUID deliveryManagerId,
