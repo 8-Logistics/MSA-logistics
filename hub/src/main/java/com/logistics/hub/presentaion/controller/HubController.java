@@ -8,12 +8,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +45,6 @@ public class HubController {
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@PutMapping("/hubs/{hubId}")
 	public ResponseEntity<HubUpdateResDTO> updateHub(
-		@RequestHeader("X-User-role") String userRole,
 		@PathVariable(name = "hubId") UUID hubId,
 		@RequestBody HubUpdateReqDTO request) {
 		return ResponseEntity.ok(hubService.updateHub(request, hubId));
@@ -93,18 +90,9 @@ public class HubController {
 	}
 
 	@GetMapping("/hubs/user/{userId}")
-	public UUID getUserHubId(@PathVariable("userId") int userId) {
+	public UUID getUserHubId(@PathVariable("userId") long userId) {
 		log.info("getUserHubId Controller");
 		return hubService.getUserHubId(userId);
-	}
-
-	@DeleteMapping("/hubs/{hubId}")
-	public ResponseEntity<Void> deleteHub(
-		@RequestHeader("X-User-id") String userId,
-		@RequestHeader("X-User-role") String userRole,
-		@PathVariable(name = "hubId") UUID hubId) {
-		hubService.deleteHub(hubId, userRole, userId);
-		return ResponseEntity.noContent().build();
 	}
 
 }

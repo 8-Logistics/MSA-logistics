@@ -57,16 +57,6 @@ public class HubService {
 		Hub hub = getHub(hubId);
 		hub.update(request);
 		return HubUpdateResDTO.of(hub);
-
-	}
-
-	@Transactional
-	public void deleteHub(UUID hubId, String userRole, String userId) {
-		Hub hub = getHub(hubId);
-		if (hub.isDelete()){
-			throw new IllegalStateException("This hub is already deleted.");
-		}
-		hub.delete(userId);
 	}
 
 	@Transactional
@@ -128,8 +118,8 @@ public class HubService {
 		hub.removeOutboundPath(hubPath, userId);
 	}
 
-	@Cacheable(cacheNames = "hubCache", key = "args[0]")
 	public Hub getHub(UUID id) {
+		log.info("###Hub checkHub Service getHub");
 		return hubRepository.findById(id).filter(hub -> !hub.isDelete())
 			.orElseThrow(() -> new IllegalArgumentException("Hub not found."));
 	}
@@ -163,7 +153,6 @@ public class HubService {
 	@Transactional(readOnly = true)
 	@Cacheable(cacheNames = "hubPathReadCache", key = "#sourceHubId + ':' + #destinationHubId")
 	public HubPath getExactHubPath(UUID sourceHubId, UUID destinationHubId) {
-		// log.info("getExactHubPath 특정경로 조회 접근");
 		Hub sourceHub = getHub(sourceHubId);
 		Hub destinationHub = getHub(destinationHubId);
 		validateSourceAndDestination(sourceHub, destinationHub);
@@ -172,11 +161,12 @@ public class HubService {
 
 	// 허브 있는지 체크 : FeignClient 호출 메서드
 	public boolean checkHub(UUID hubId) {
+		log.info("###Hub checkHub Service checkHub");
 		return getHub(hubId) != null;
 	}
 
 	// 허브 매니저ID로 소속허브ID 확인: FeignClient 호출 메서드
-	public UUID getUserHubId(int userId) {
+	public UUID getUserHubId(long userId) {
 		log.info("getUserHubId Service");
 		return hubRepository.findAll().stream()
 			.filter(hub -> hub.getManagerId() == userId)

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.logistics.hub.application.dto.HubCreateReqDTO;
 import com.logistics.hub.application.dto.HubUpdateReqDTO;
 
@@ -52,6 +53,7 @@ public class Hub extends BaseEntity {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "source_hub_id")
+	@JsonManagedReference
 	private List<HubPath> outboundPaths = new ArrayList<>();
 
 	public static Hub create(HubCreateReqDTO dto) {
