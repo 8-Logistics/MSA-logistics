@@ -14,7 +14,7 @@ public interface DeliveryManagerRepository extends JpaRepository<DeliveryManager
 
     Optional<DeliveryManager> findByIdAndIsDeleteFalse(UUID deliveryId);
 
-    Optional<DeliveryManager> findTopBySourceHubIdIsNullAndIsDeleteFalseAndDeliverySequenceGreaterThanOrderByDeliverySequenceAscCreatedAtAsc(long deliverySequence);
+    Optional<DeliveryManager> findTopBySourceHubIdIsNullAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc();
 
-    Optional<DeliveryManager> findTopBySourceHubIdAndIsDeleteFalseAndDeliverySequenceGreaterThanOrderByDeliverySequenceAscCreatedAtAsc(UUID hubId, long deliverySequence);
+    Optional<DeliveryManager> findTopBySourceHubIdAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc(UUID hubId);
 }

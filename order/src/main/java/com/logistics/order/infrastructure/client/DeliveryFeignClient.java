@@ -12,6 +12,6 @@ import java.util.UUID;
 
 @FeignClient(name = "delivery-service",configuration = FeignConfig.class)
 public interface DeliveryFeignClient {
-    @PostMapping("/api/v1/deliveries/createDelivery")
+    @PostMapping("/api/v1/deliveries")
     public OrderDeliveryResDto createDelivery(@RequestBody OrderToDeliveryReqDto dto);
 }
