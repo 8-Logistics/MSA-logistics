@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @FeignClient(name = "vendor-service",configuration = FeignConfig.class)
 public interface VendorFeignClient {
-    @GetMapping("/api/v1/vendor/{vendorId}")
+    @GetMapping("/api/v1/vendors/{vendorId}/address")
     String getVendorAddress(@PathVariable("vendorId") UUID vendorId);
 
 }

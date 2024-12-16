@@ -31,7 +31,7 @@ public class OrderToAiReqDto {
                                        OrderDeliveryResDto orderDeliveryResDto, DeliveryUserResDto deliveryUserResDto, String productName) {
         return OrderToAiReqDto.builder()
                 .orderId(order.getOrderId())
-                .userName(orderUserDto.getUserName())
+                .userName(orderUserDto.getName())
                 .userEmail(orderUserDto.getEmail())
                 .productName(productName)
                 .stock(order.getQuantity())
