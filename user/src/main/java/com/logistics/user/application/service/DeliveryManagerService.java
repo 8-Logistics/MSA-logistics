@@ -26,5 +26,5 @@ public interface DeliveryManagerService {
     Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(DeliveryManagerSearchReqDto request, Pageable pageable
                 , String username, String role);
 
-    Long getDeliveryManagerUserId(UUID deliveryManagerId);
+    String getDeliveryManagerUserId(UUID deliveryManagerId);
 }

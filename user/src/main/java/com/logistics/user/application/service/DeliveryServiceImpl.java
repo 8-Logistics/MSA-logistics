@@ -257,11 +257,11 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     @Transactional(readOnly = true)
     @Override
-    public Long getDeliveryManagerUserId(UUID deliveryManagerId) {
+    public String getDeliveryManagerUserId(UUID deliveryManagerId) {
 
         DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
 
-        return deliveryManager.getUser().getId();
+        return deliveryManager.getUser().getUsername();
     }
 }

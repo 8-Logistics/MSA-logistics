@@ -52,7 +52,7 @@ public class DeliveryManagerController {
 
     // [Feign] order 배송담당자 UUID로 userId return API
     @GetMapping("/delivery-manager/{deliveryManagerId}/order")
-    public ResponseEntity<Long> getOrderUserId(@PathVariable UUID deliveryManagerId){
+    public ResponseEntity<String> getOrderUserId(@PathVariable UUID deliveryManagerId){
         return ResponseEntity.ok(deliveryManagerService.getDeliveryManagerUserId(deliveryManagerId));
     }
 
