@@ -1,5 +1,6 @@
 package com.logistics.user.controller;
 
+import com.logistics.user.application.dto.ApiResponse;
 import com.logistics.user.application.dto.TokenDto;
 import com.logistics.user.application.dto.UserSignInReqDto;
 import com.logistics.user.application.dto.UserSignUpReqDto;
@@ -46,7 +47,7 @@ public class AuthController {
         headers.set("Authorization", tokenDto.getAccessToken());
         headers.set("Refresh-Authorization", tokenDto.getRefreshToken());
 
-        return new ResponseEntity<>("loginSuccess", headers, HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.success("login Success"), headers, HttpStatus.OK);
     }
 
     @GetMapping("/auth/refresh")
@@ -57,7 +58,7 @@ public class AuthController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getAccessToken());
 
-        return new ResponseEntity<>("AccessToken 재발급 성공", headers, HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.success("AccessToken 재발급 성공"), headers, HttpStatus.OK);
     }
 
 }

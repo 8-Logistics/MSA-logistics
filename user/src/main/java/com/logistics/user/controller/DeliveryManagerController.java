@@ -25,7 +25,7 @@ public class DeliveryManagerController {
     @PostMapping("/delivery-manager")
     public ResponseEntity<?> approveDeliveryManager(@RequestBody DeliveryManagerCreateReqDto request, @AuthenticationPrincipal CustomPrincipal principal){
         DeliveryManagerSearchResDto response = deliveryManagerService.approveDeliveryManager(request, principal.getUserId(), principal.getRole());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("배송담당자 생성 success", response));
     }
 
     // 배송 담당자 삭제 API
@@ -33,7 +33,7 @@ public class DeliveryManagerController {
     @DeleteMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<?> deleteDeliveryManager(@PathVariable UUID deliveryManagerId, @AuthenticationPrincipal CustomPrincipal principal){
         deliveryManagerService.deleteDeliveryManager(deliveryManagerId, principal.getUserId(), principal.getRole());
-        return ResponseEntity.ok("배송담당자가 삭제되었습니다.");
+        return ResponseEntity.ok(ApiResponse.success("배송담당자가 삭제되었습니다."));
     }
 
     // [Feign] 배송 상태 update API
@@ -53,13 +53,14 @@ public class DeliveryManagerController {
     // 배송 담당자 단건 조회 API
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/{deliveryManagerId}")
-    public ResponseEntity<DeliveryManagerSearchResDto> getDeliveryManager(@PathVariable UUID deliveryManagerId){
+    public ResponseEntity<?> getDeliveryManager(@PathVariable UUID deliveryManagerId){
 
         DeliveryManagerSearchResDto response = deliveryManagerService.getDeliveryManager(deliveryManagerId);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("배송 담당자 단건 조회 success", response));
     }
 
+    // 배송담당자 수정 API
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @PutMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<?> modifyDeliveryManager(@PathVariable UUID deliveryManagerId, @RequestBody DeliveryManagerUpdateReqDto request,
@@ -68,11 +69,13 @@ public class DeliveryManagerController {
         DeliveryManagerSearchResDto response = deliveryManagerService.modifyDeliveryManager(deliveryManagerId, request,
                 principal.getUserId(), principal.getRole());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("배송 담당자 수정 success", response));
     }
 
+    // 배송 담당자 조회 API
+    @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/search")
-    public ResponseEntity<Page<DeliveryManagerSearchResDto>>
+    public ResponseEntity<?>
                     getDeliveryManagerSearch(DeliveryManagerSearchReqDto request,
                     Pageable pageable,
                     @AuthenticationPrincipal CustomPrincipal principal
@@ -81,6 +84,6 @@ public class DeliveryManagerController {
         Page<DeliveryManagerSearchResDto> response = deliveryManagerService
                                         .getDeliveryManagerSearch(request, pageable, principal.getUserId(), principal.getRole());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("배송 담당자 조회 success", response));
     }
 }
