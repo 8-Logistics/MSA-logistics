@@ -46,8 +46,8 @@ public class DeliveryManagerController {
 
     // [Feign] 배송 sequence return API
     @GetMapping("/delivery-manager/deliverySequence")
-    public DeliverySequenceDto getDeliverySequence(@RequestParam("hubId") UUID hubId, @RequestParam("deliverySequence") long deliverySequence){
-        return deliveryManagerService.getDeliverySequence(hubId, deliverySequence);
+    public DeliverySequenceDto getDeliverySequence(@RequestParam("hubId") UUID hubId){
+        return deliveryManagerService.getDeliverySequence(hubId);
     }
 
     // [Feign] order 배송담당자 UUID로 userId return API
