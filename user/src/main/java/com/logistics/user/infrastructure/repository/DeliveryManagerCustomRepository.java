@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface DeliveryManagerCustomRepository {
     Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
-            DeliveryManagerSearchReqDto request, Pageable pageable, String username, String role);
+            DeliveryManagerSearchReqDto request, Pageable pageable);
 }

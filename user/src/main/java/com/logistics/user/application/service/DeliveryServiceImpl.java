@@ -231,7 +231,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
     public Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
             DeliveryManagerSearchReqDto request, Pageable pageable, String username, String role) {
 
-        if(role.equals(UserRole.HUB_MANAGER.getAuthority()) && request.getHubIdList().size() == 1){
+        if(role.equals(UserRole.HUB_MANAGER.getAuthority()) && !request.getHubIdList().isEmpty()){
 
             User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
                     .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
@@ -248,6 +248,6 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
         }
 
-        return deliveryManagerRepository.getDeliveryManagerSearch(request, pageable, username, role);
+        return deliveryManagerRepository.getDeliveryManagerSearch(request, pageable);
     }
 }

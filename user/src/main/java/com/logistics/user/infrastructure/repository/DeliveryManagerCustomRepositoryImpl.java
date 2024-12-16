@@ -28,7 +28,7 @@ public class DeliveryManagerCustomRepositoryImpl implements DeliveryManagerCusto
 
     @Override
     public Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
-            DeliveryManagerSearchReqDto deliveryManagerSearchReqDto, Pageable pageable, String username, String role) {
+            DeliveryManagerSearchReqDto deliveryManagerSearchReqDto, Pageable pageable) {
 
         List<DeliveryManagerSearchResDto> results = jpaQueryFactory
                 .select(
