@@ -56,7 +56,6 @@ public class OrderService {
         // productVendorId로 vendor에 요청 > vendorId(업체) 주소 받기
         String productVendorAddress = vendorFeignClient.getVendorAddress(orderProductResDto.getProductVendorId());
 
-        // Todo : userId로 user에 배송담당자에 요청 > userId로 유저 이름, slackId 받기 (배달 정보에서 담당자Id 받을 수 있는지 확인)
         // deliveryId로 user > user 이름, 메일 주소 가져오기
         OrderUserResDto orderUserDto = userFeignClient.getUserInfo(userId);
 
@@ -65,9 +64,13 @@ public class OrderService {
 
         try {
             OrderDeliveryResDto orderDeliveryResDto = deliveryFeignClient.createDelivery(orderToDeliveryReqDto);
+
+            String deliveryManagerId = userFeignClient.getDeliveryManagerUserId(orderDeliveryResDto.getDeliveryManagerId());
+            DeliveryUserResDto deliveryUserResDto = userFeignClient.getDeliveryUserInfo(deliveryManagerId);
             order = order.createOrder(order, orderProductResDto, userId, orderDeliveryResDto);
 
-            OrderToAiReqDto orderToAiReqDto = OrderToAiReqDto.from(order, orderUserDto, productVendorAddress, orderDeliveryResDto);
+            OrderToAiReqDto orderToAiReqDto = OrderToAiReqDto.from(order, orderUserDto, productVendorAddress,
+                    orderDeliveryResDto, deliveryUserResDto, orderProductResDto.getProductName());
 
             slackService.sendSlack(orderToAiReqDto);
 

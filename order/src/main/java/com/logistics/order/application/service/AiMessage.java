@@ -23,8 +23,8 @@ public class AiMessage {
 
     public String getAiRequest(OrderToAiReqDto req) {
 
-        //Todo req 완성 후 채우기
-        String prompt = req.getOrderId() + "|" + req.getPickupRequest() + "|" + req.getProductVendorAddress();
+        String prompt = req.getOrderId() + "|" + req.getUserName() + "/" + req.getUserEmail() + "|" + req.getProductName() + " " + req.getStock()
+        + "|" + req.getPickupRequest() + "|" + req.getSourceHubAddress() + "|" +req.getProductVendorAddress() + "|" + req.getDeliveryManagerName() + "/" + req.getDeliveryManagerEmail();
 
         String requestUrl = geminiApiUrl + "?key=" + geminiApiKey;
 

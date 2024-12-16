@@ -1,5 +1,6 @@
 package com.logistics.order.application.dto.ai;
 
+import com.logistics.order.application.dto.DeliveryUserResDto;
 import com.logistics.order.application.dto.OrderDeliveryResDto;
 import com.logistics.order.application.dto.OrderToDeliveryReqDto;
 import com.logistics.order.application.dto.OrderUserResDto;
@@ -15,8 +16,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderToAiReqDto {
     private UUID orderId;
-    //private String userName;
-    //private String userSlackId;
+    private String userName;
+    private String userEmail;
+    private String productName;
+    private int stock;
     private String pickupRequest;
     private String sourceHubAddress; // 출발 허브 주소
     private String productVendorAddress; // 도착지(수령업체)
@@ -24,16 +27,19 @@ public class OrderToAiReqDto {
     private String deliveryManagerEmail;
     private String deliveryManagerSlackId;
 
-    public static OrderToAiReqDto from(Order order, OrderUserResDto orderUserDto, String productVendorAddress, OrderDeliveryResDto orderDeliveryResDto) {
+    public static OrderToAiReqDto from(Order order, OrderUserResDto orderUserDto, String productVendorAddress,
+                                       OrderDeliveryResDto orderDeliveryResDto, DeliveryUserResDto deliveryUserResDto, String productName) {
         return OrderToAiReqDto.builder()
                 .orderId(order.getOrderId())
-                //.userName(order.get)
-                //.userSlackId(orderUserDto.getSlackId())
+                .userName(orderUserDto.getUserName())
+                .userEmail(orderUserDto.getEmail())
+                .productName(productName)
+                .stock(order.getQuantity())
                 .pickupRequest(order.getPickupRequest())
                 .sourceHubAddress(orderDeliveryResDto.getSourceHubAddress())
                 .productVendorAddress(productVendorAddress)
-                .deliveryManagerName(orderUserDto.getUserName())
-                .deliveryManagerEmail(orderUserDto.getEmail())
+                .deliveryManagerName(deliveryUserResDto.getUserName())
+                .deliveryManagerEmail(deliveryUserResDto.getEmail())
                 .deliveryManagerSlackId(orderUserDto.getSlackId())
                 .build();
 

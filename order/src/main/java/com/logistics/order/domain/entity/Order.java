@@ -32,8 +32,8 @@ public class Order extends BaseEntity {
     @Column(name="product_id")
     private UUID productId;
 
-    @Column(name = "recipient_id")
-    private String recipientId;
+    @Column
+    private String recipientName;
 
     @Column
     private int quantity;
@@ -47,13 +47,11 @@ public class Order extends BaseEntity {
                 .providerVendorId(orderProductResDto.getProductVendorId())
                 .receiveVendorId(order.getReceiveVendorId())
                 .productId(order.getProductId())
-                .recipientId(userId)
+                .recipientName(userId)
                 .quantity(order.getQuantity())
                 .pickupRequest(order.getPickupRequest())
                 .build();
 
     }
 
-
-    //Todo 배송 완료 시 주문 상태를 바꿀 것인지 (Status) 추가 고려
 }

@@ -18,8 +18,7 @@ public class OrderCreateResDto {
     private UUID receiveVendorId;
     private int quantity;
     private String pickupRequest;
-    //private Long recipientId; userId가 String
-    private String recipientId;
+    private String recipientName;
 
     public static OrderCreateResDto from(Order order) {
         return OrderCreateResDto.builder()
@@ -30,7 +29,7 @@ public class OrderCreateResDto {
                 .receiveVendorId(order.getReceiveVendorId())
                 .quantity(order.getQuantity())
                 .pickupRequest(order.getPickupRequest())
-                .recipientId(order.getRecipientId())
+                .recipientName(order.getRecipientName())
                 .build();
     }
 }

@@ -27,8 +27,7 @@ public class SlackService {
 
         // gemini 호출하여 메시지 내용 생성
         String message = aiMessage.getAiRequest(orderToAiReqDto);
-        //String deliveryManagerSlackId = orderToAiReqDto.getDeliveryManagerSlackId();
-        String deliveryManagerSlackId = "U07FVA7DP40";
+        String deliveryManagerSlackId = orderToAiReqDto.getDeliveryManagerSlackId();
 
         SlackMessageReqDto slackMessageReqDto = new SlackMessageReqDto("@"+deliveryManagerSlackId,message);
 
