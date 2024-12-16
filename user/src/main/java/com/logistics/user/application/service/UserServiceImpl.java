@@ -1,17 +1,14 @@
 package com.logistics.user.application.service;
 
-import com.logistics.user.application.dto.OrderUserDto;
-import com.logistics.user.application.dto.UserModifyReqDto;
-import com.logistics.user.application.dto.UserRoleUpdateDto;
-import com.logistics.user.application.dto.UserSearchResDto;
+import com.logistics.user.application.dto.*;
 import com.logistics.user.domain.entity.BaseEntity;
-import com.logistics.user.domain.entity.DeliveryManager;
 import com.logistics.user.domain.entity.User;
 import com.logistics.user.domain.enums.UserRole;
 import com.logistics.user.domain.repository.DeliveryManagerRepository;
 import com.logistics.user.domain.repository.UserRepository;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +86,27 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
         return OrderUserDto.toResponse(user.getName(), user.getSlackId(), user.getEmail());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<UserSearchResDto> searchUsers(UserSearchReqDto searchRequest, Pageable pageable, String userId, String role) {
+
+        if(!role.equals(UserRole.MASTER.getAuthority()) && !searchRequest.getUserIdList().isEmpty()) {
+
+            User user = userRepository.findByUsernameAndIsDeleteFalse(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
+
+            if (!searchRequest.getUserIdList().get(0).equals(user.getId())) {
+                throw new IllegalArgumentException("자기 자신만 검색/조회할 수 있습니다.");
+            }
+
+            if (role.equals(searchRequest.getRole().getAuthority())) {
+                throw new IllegalArgumentException("자기 자신만 검색/조회할 수 있습니다.");
+            }
+        }
+
+        return userRepository.searchUsers(searchRequest, pageable);
     }
 
 

@@ -1,13 +1,14 @@
 package com.logistics.user.controller;
 
-import com.logistics.user.application.dto.OrderUserDto;
-import com.logistics.user.application.dto.UserModifyReqDto;
-import com.logistics.user.application.dto.UserRoleUpdateDto;
-import com.logistics.user.application.dto.UserSearchResDto;
+import com.logistics.user.application.CustomPrincipal;
+import com.logistics.user.application.dto.*;
 import com.logistics.user.application.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -72,6 +73,16 @@ public class UserController {
     @GetMapping("/users/userInfo/{userId}")
     public OrderUserDto getUserInfo(@PathVariable("userId") Long userId) {
         return userService.getUserInfo(userId);
+    }
+
+
+    public ResponseEntity<Page<UserSearchResDto>> searchUsers(UserSearchReqDto searchRequest,
+                                                             Pageable pageable,
+                                                             @AuthenticationPrincipal CustomPrincipal principal){
+
+        Page<UserSearchResDto> response = userService.searchUsers(searchRequest, pageable, principal.getUserId(), principal.getRole());
+
+        return ResponseEntity.ok(response);
     }
 
 

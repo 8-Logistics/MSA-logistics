@@ -53,13 +53,13 @@ public class User extends BaseEntity {
     }
 
     public void userModify(String slackId, String name, String email){
-        if(slackId != null && slackId.isEmpty()){
+        if(slackId != null && !slackId.isEmpty()){
             this.slackId = slackId;
         }
-        if(name != null && name.isEmpty()){
+        if(name != null && !name.isEmpty()){
             this.name = name;
         }
-        if(email != null && email.isEmpty()){
+        if(email != null && !email.isEmpty()){
             this.email = email;
         }
 

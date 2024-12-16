@@ -1,9 +1,9 @@
 package com.logistics.user.application.service;
 
-import com.logistics.user.application.dto.OrderUserDto;
-import com.logistics.user.application.dto.UserModifyReqDto;
-import com.logistics.user.application.dto.UserRoleUpdateDto;
-import com.logistics.user.application.dto.UserSearchResDto;
+import com.logistics.user.application.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface UserService {
 
@@ -16,4 +16,7 @@ public interface UserService {
     boolean updateUserRole(Long userId, UserRoleUpdateDto request);
 
     OrderUserDto getUserInfo(Long userId);
+
+    Page<UserSearchResDto> searchUsers(UserSearchReqDto searchRequest,
+                                                       Pageable pageable, String userId, String role);
 }

@@ -15,7 +15,6 @@ public class UserSearchResDto {
     private String slackId;
     private String name;
     private String role;
-    private String userStatus;
 
     public static UserSearchResDto toUserResponse(User user){
         return UserSearchResDto.builder()
