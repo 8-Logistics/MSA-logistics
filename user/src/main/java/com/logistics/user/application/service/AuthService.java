@@ -1,5 +1,6 @@
 package com.logistics.user.application.service;
 
+import com.logistics.user.application.dto.TokenDto;
 import com.logistics.user.application.dto.UserSignInReqDto;
 import com.logistics.user.application.dto.UserSignUpReqDto;
 import org.springframework.http.ResponseEntity;
@@ -11,5 +12,7 @@ public interface AuthService {
 
     void signUp(UserSignUpReqDto request);
 
-    ResponseEntity<?> signIn(UserSignInReqDto request);
+    TokenDto signIn(UserSignInReqDto request);
+
+    TokenDto validateRefreshToken(String refreshToken);
 }

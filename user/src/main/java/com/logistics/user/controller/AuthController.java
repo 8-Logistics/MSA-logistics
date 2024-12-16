@@ -1,5 +1,6 @@
 package com.logistics.user.controller;
 
+import com.logistics.user.application.dto.TokenDto;
 import com.logistics.user.application.dto.UserSignInReqDto;
 import com.logistics.user.application.dto.UserSignUpReqDto;
 import com.logistics.user.application.service.AuthService;
@@ -7,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +39,25 @@ public class AuthController {
 
     @PostMapping("/auth/signIn")
     public ResponseEntity<?> signIn(@RequestBody UserSignInReqDto request) {
-        return authService.signIn(request);
+
+        TokenDto tokenDto = authService.signIn(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", tokenDto.getAccessToken());
+        headers.set("Refresh-Authorization", tokenDto.getRefreshToken());
+
+        return new ResponseEntity<>("loginSuccess", headers, HttpStatus.OK);
     }
 
     @GetMapping("/auth/refresh")
     public ResponseEntity<?> validateRefreshToken(@RequestHeader("Refresh-Authorization") String refreshToken) {
 
-        return ResponseEntity.ok("");
+        TokenDto tokenDto = authService.validateRefreshToken(refreshToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", tokenDto.getAccessToken());
+
+        return new ResponseEntity<>("AccessToken 재발급 성공", headers, HttpStatus.OK);
     }
 
 }

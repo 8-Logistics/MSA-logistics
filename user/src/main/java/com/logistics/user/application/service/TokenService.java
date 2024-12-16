@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -45,8 +46,9 @@ public class TokenService {
                 .compact();
     }
 
-    // RefreshToken 생성 (여기에 Cacheable 넣는다.)
-    public String createRefreshToken(Long userId, String username, String role) {
+    // UserRefreshToken::username 으로 캐시에 저장
+    @Cacheable(cacheNames = "UserRefreshToken", key = "args[0]")
+    public String createRefreshToken(String username, String role) {
         return BEARER_PREFIX + Jwts.builder()
                 .subject("RefreshToken")
                 .claim("X-User-Id", username)
@@ -65,7 +67,7 @@ public class TokenService {
         return null;
     }
 
-    private boolean validateRefreshToken(String refreshToken) {
+    public String checkRefreshToken(String refreshToken) {
         try {
             Jws<Claims> claimsJws = Jwts.parser()
                     .verifyWith(secretKey)
@@ -75,15 +77,15 @@ public class TokenService {
 
                 System.out.println("###### : claimsJws.getPayload().getSubject() : " + claimsJws.getPayload().getSubject());
 
-                return false;
+                return null;
             }
 
             String username = claimsJws.getPayload().get("X-User-Id").toString();
             String role = claimsJws.getPayload().get("X-Role").toString();
 
-            return true;
+            return username + "," + role;
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
