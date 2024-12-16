@@ -20,11 +20,11 @@ public class DeliveryController {
 
     @PostMapping("/deliveries")
     @PreAuthorize("hasAnyAuthority('MASTER')")
-    public ApiResponse<DeliveryCreateResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
+    public ResponseEntity<DeliveryCreateResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
 
         DeliveryCreateResDto response = deliveryService.createDelivery(request);
 
-        return ApiResponse.success("배송 생성 성공", response);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/deliveries/{deliveryId}")

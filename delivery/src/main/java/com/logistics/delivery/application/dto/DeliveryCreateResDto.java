@@ -9,10 +9,10 @@ import java.util.UUID;
 @Builder
 public class DeliveryCreateResDto {
 
-    private final UUID deliveryId;
-    private final UUID orderId;
-    private final UUID deliveryPathId;
-    private final String sourceHubAddress; // 주소로 변경
-    private final UUID hubDeliveryManagerId;
+    private UUID deliveryId;
+    private UUID orderId;
+    private UUID deliveryPathId;
+    private String sourceHubAddress; // 주소로 변경
+    private UUID hubDeliveryManagerId;
 }
 
