@@ -14,7 +14,7 @@ public interface UserClient extends UserService {
 	// 허브 매니져로 롤 변경
 	@PutMapping("/api/v1/users/{userId}/role")
 	boolean updateUserRole(
-		@PathVariable("userId") String userId,
+		@PathVariable("userId") long userId,
 		@RequestBody UserRoleUpdateDto request
 	);
 

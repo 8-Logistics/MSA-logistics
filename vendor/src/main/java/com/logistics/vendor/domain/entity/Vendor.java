@@ -46,7 +46,7 @@ public class Vendor extends BaseEntity {
 	private String address;
 
 	@Column(name = "manager_id")
-	private String managerId;
+	private long managerId;
 
 	public static Vendor create(VendorCreateReqDTO dto) {
 		return Vendor.builder()
@@ -72,7 +72,7 @@ public class Vendor extends BaseEntity {
 		}
 	}
 
-	public void assignVendorManager(String userId) {
+	public void assignVendorManager(long userId) {
 		this.managerId = userId;
 	}
 

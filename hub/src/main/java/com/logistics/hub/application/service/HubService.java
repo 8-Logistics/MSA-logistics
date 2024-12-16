@@ -3,6 +3,10 @@ package com.logistics.hub.application.service;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +40,10 @@ public class HubService {
 	private final HubRepository hubRepository;
 	private final UserService userService;
 
+	@Autowired
+	private UserClient userClient;
+
+	@CachePut(cacheNames = "hubCache", key = "#result.id")
 	public HubCreateResDTO createHub(HubCreateReqDTO request) {
 		Hub hub = Hub.create(request);
 		hubRepository.save(hub);
@@ -43,6 +51,11 @@ public class HubService {
 	}
 
 	@Transactional
+	@CachePut(cacheNames = "hubCache", key = "args[0]")
+	@Caching(evict = {
+		@CacheEvict(cacheNames = "hubReadCache", allEntries = true), // 허브목록 캐시 전체 삭제
+		@CacheEvict(cacheNames = "hubPathReadCache", allEntries = true) // 허브패스목록 전체 삭제
+	})
 	public HubUpdateResDTO updateHub(HubUpdateReqDTO request, UUID hubId) {
 		Hub hub = getHub(hubId);
 		hub.update(request);
@@ -50,7 +63,7 @@ public class HubService {
 	}
 
 	@Transactional
-	public void assignHubManager(UUID hubId, String userId) {
+	public void assignHubManager(UUID hubId, long userId) {
 		Hub hub = getHub(hubId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setSourceHubId(hubId);
@@ -63,12 +76,17 @@ public class HubService {
 	}
 
 	@Transactional
+	@Caching(evict = {
+		@CacheEvict(cacheNames = "hubReadCache", allEntries = true), // 허브목록 캐시 전체 삭제
+		@CacheEvict(cacheNames = "hubPathReadCache", allEntries = true) // 허브패스목록 전체 삭제
+	})
 	public void deleteHub(UUID hubId, String userId) {
 		Hub hub = getHub(hubId);
 		hub.delete(userId);
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = "hubPathReadCache", key = "#sourceHubId")
 	public HubPathCreateResDTO createHubPath(HubPathCreateReqDTO request, UUID sourceHubId) {
 		Hub sourceHub = getHub(sourceHubId);
 		Hub destinationHub = getHub(request.getDestinationHubId());
@@ -82,6 +100,8 @@ public class HubService {
 	}
 
 	@Transactional
+	@CachePut(cacheNames = "hubPathCache", key = "args[0]")
+	@CacheEvict(cacheNames = "hubPathReadCache", key = "#pathId")
 	public HubPathUpdateResDTO updateHubPath(HubPathUpdateReqDTO request, UUID hubId, UUID pathId) {
 		Hub sourceHub = getHub(hubId);
 		HubPath path = sourceHub.updateOutboundPath(pathId, request.getDistance(), request.getEstimatedTime());
@@ -89,6 +109,10 @@ public class HubService {
 	}
 
 	@Transactional
+	@Caching(evict = {
+		@CacheEvict(cacheNames = "hubPathReadCache", key = "#hubId"), // 해당 허브패스 캐시 삭제
+		@CacheEvict(cacheNames = "hubPathReadAllCache", allEntries = true) // 허브패스목록 전체 삭제
+	})
 	public void deleteHubPath(UUID hubId, UUID pathId, String userId) {
 		Hub hub = getHub(hubId);
 		HubPath hubPath = hub.findOutboundPathById(pathId);
@@ -96,7 +120,6 @@ public class HubService {
 	}
 
 	public Hub getHub(UUID id) {
-		log.info("###Hub checkHub Service getHub");
 		return hubRepository.findById(id).filter(hub -> !hub.isDelete())
 			.orElseThrow(() -> new IllegalArgumentException("Hub not found."));
 	}
@@ -114,6 +137,7 @@ public class HubService {
 		}
 	}
 
+	@Cacheable(cacheNames = "hubPathReadCache", key = "#sourceHubId + ':' + #destinationHubId")
 	public HubPath getHubPath(UUID hubId, UUID pathId) {
 		Hub hub = getHub(hubId);
 		return hub.findOutboundPathById(pathId);
@@ -127,7 +151,9 @@ public class HubService {
 
 	// 특정허브경로 정보 조회 : FeignClient 호출 메서드
 	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = "hubPathReadCache", key = "#sourceHubId + ':' + #destinationHubId")
 	public HubPath getExactHubPath(UUID sourceHubId, UUID destinationHubId) {
+		// log.info("getExactHubPath 특정경로 조회 접근");
 		Hub sourceHub = getHub(sourceHubId);
 		Hub destinationHub = getHub(destinationHubId);
 		validateSourceAndDestination(sourceHub, destinationHub);
@@ -136,15 +162,14 @@ public class HubService {
 
 	// 허브 있는지 체크 : FeignClient 호출 메서드
 	public boolean checkHub(UUID hubId) {
-		log.info("###Hub checkHub Service checkHub");
 		return getHub(hubId) != null;
 	}
 
 	// 허브 매니저ID로 소속허브ID 확인: FeignClient 호출 메서드
-	public UUID getUserHubId(String userId) {
+	public UUID getUserHubId(int userId) {
 		log.info("getUserHubId Service");
 		return hubRepository.findAll().stream()
-			.filter(hub -> hub.getManagerId().equals(userId))
+			.filter(hub -> hub.getManagerId() == userId)
 			.map(Hub::getId)
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("No hub found for userId: " + userId));

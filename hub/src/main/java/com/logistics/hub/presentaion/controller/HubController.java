@@ -54,7 +54,7 @@ public class HubController {
 	@PutMapping("/hubs/{hubId}/manager")
 	public ResponseEntity<String> assignHubManager(
 		@PathVariable UUID hubId,
-		@RequestParam String userId) {
+		@RequestParam long userId) {
 		hubService.assignHubManager(hubId, userId);
 		return ResponseEntity.ok("Assigned manager to hub Successful");
 	}
@@ -63,6 +63,7 @@ public class HubController {
 	@DeleteMapping("/hubs/{hubId}")
 	public ResponseEntity<String> deleteHub(
 		@AuthenticationPrincipal CustomPrincipal customPrincipal,
+		// @RequestHeader("X-User-id") String userId,
 		@PathVariable(name = "hubId") UUID hubId) {
 		hubService.deleteHub(hubId, customPrincipal.getUserId());
 		return ResponseEntity.ok("Hub successfully deleted");
@@ -90,9 +91,10 @@ public class HubController {
 	}
 
 	@GetMapping("/hubs/user/{userId}")
-	public UUID getUserHubId(@PathVariable("userId") String userId) {
+	public UUID getUserHubId(@PathVariable("userId") int userId) {
 		log.info("getUserHubId Controller");
 		return hubService.getUserHubId(userId);
 	}
+
 
 }

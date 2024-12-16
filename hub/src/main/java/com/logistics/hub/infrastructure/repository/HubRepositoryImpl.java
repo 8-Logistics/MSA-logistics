@@ -40,7 +40,7 @@ public class HubRepositoryImpl implements HubRepositoryCustom {
 			.from(hub)
 			.where(
 				keywordContains(keyword)
-					.and(hubId != null ? hub.id.eq(hubId) : null)
+				,(hubId != null ? hub.id.eq(hubId) : null)
 			)
 			.orderBy(getOrderSpecifier(sortOption, hub))
 			.offset(pageable.getOffset())
@@ -52,7 +52,7 @@ public class HubRepositoryImpl implements HubRepositoryCustom {
 			.from(hub)
 			.where(
 				keywordContains(keyword)
-					.and(hubId != null ? hub.id.eq(hubId) : null)
+			    ,(hubId != null ? hub.id.eq(hubId) : null)
 			)
 			.fetchOne();
 		return new PageImpl<>(hubResponses, pageable, total != null ? total : 0L);
