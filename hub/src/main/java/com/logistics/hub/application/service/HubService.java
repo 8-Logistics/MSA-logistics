@@ -60,7 +60,7 @@ public class HubService {
 	}
 
 	@Transactional
-	public void assignHubManager(UUID hubId, String userId) {
+	public void assignHubManager(UUID hubId, long userId) {
 		Hub hub = getHub(hubId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setSourceHubId(hubId);
