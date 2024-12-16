@@ -103,4 +103,7 @@ public class VendorService {
 		return vendor.getAddress();
 	}
 
+	public boolean checkVendor(UUID vendorId) {
+		return isVendorExists(vendorId);
+	}
 }

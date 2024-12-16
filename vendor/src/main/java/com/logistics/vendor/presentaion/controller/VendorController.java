@@ -90,4 +90,9 @@ public class VendorController {
 		return ResponseEntity.ok(vendorService.getVendorAddress(vendorId));
 	}
 
+	@GetMapping("/vendors/vendor/{vendorId}")
+	public boolean checkVendor(@PathVariable(name="vendorId") UUID vendorId) {
+		return vendorService.checkVendor(vendorId);
+	}
+
 }

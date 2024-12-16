@@ -11,7 +11,7 @@ public interface HubFeignClient {
     // Todo feign 완성 시 테스트 필요
     /* 상품 등록 시 소속시킬 허브가 존재하는지 확인
     * hubId가 있는지 없는지 체크 = return true/false */
-    @GetMapping("/api/v1/hubs/hub/{hubId}")
+    @GetMapping("/api/v1/hubs/{hubId}/exists")
     public boolean checkHub(@PathVariable("hubId") UUID hubId);
 
     /* 상품 수정 시 허브 매니저인 경우 소속허브 ID를 가져와
