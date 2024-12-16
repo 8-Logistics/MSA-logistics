@@ -61,15 +61,6 @@ public class HubService {
 	}
 
 	@Transactional
-	public void deleteHub(UUID hubId, String userRole, String userId) {
-		Hub hub = getHub(hubId);
-		if (hub.isDelete()){
-			throw new IllegalStateException("This hub is already deleted.");
-		}
-		hub.delete(userId);
-	}
-
-	@Transactional
 	public void assignHubManager(UUID hubId, long userId) {
 		Hub hub = getHub(hubId);
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
@@ -128,7 +119,6 @@ public class HubService {
 		hub.removeOutboundPath(hubPath, userId);
 	}
 
-	@Cacheable(cacheNames = "hubCache", key = "args[0]")
 	public Hub getHub(UUID id) {
 		return hubRepository.findById(id).filter(hub -> !hub.isDelete())
 			.orElseThrow(() -> new IllegalArgumentException("Hub not found."));
@@ -143,7 +133,7 @@ public class HubService {
 	public void isPathExist(Hub sourceHub, Hub destinationHub) {
 		if (sourceHub.getOutboundPaths().stream()
 			.anyMatch(hubPath -> hubPath.getDestinationHub().equals(destinationHub))) {
-			throw new IllegalArgumentException("This hubPath is already exist.");
+			throw new IllegalArgumentException("This hubPath is not exist.");
 		}
 	}
 

@@ -47,7 +47,6 @@ public class HubController {
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@PutMapping("/hubs/{hubId}")
 	public ResponseEntity<HubUpdateResDTO> updateHub(
-		@RequestHeader("X-User-role") String userRole,
 		@PathVariable(name = "hubId") UUID hubId,
 		@RequestBody HubUpdateReqDTO request) {
 		return ResponseEntity.ok(hubService.updateHub(request, hubId));
@@ -66,6 +65,7 @@ public class HubController {
 	@DeleteMapping("/hubs/{hubId}")
 	public ResponseEntity<String> deleteHub(
 		@AuthenticationPrincipal CustomPrincipal customPrincipal,
+		// @RequestHeader("X-User-id") String userId,
 		@PathVariable(name = "hubId") UUID hubId) {
 		hubService.deleteHub(hubId, customPrincipal.getUserId());
 		return ResponseEntity.ok("Hub successfully deleted");
@@ -98,13 +98,5 @@ public class HubController {
 		return hubService.getUserHubId(userId);
 	}
 
-	@DeleteMapping("/hubs/{hubId}")
-	public ResponseEntity<Void> deleteHub(
-		@RequestHeader("X-User-id") String userId,
-		@RequestHeader("X-User-role") String userRole,
-		@PathVariable(name = "hubId") UUID hubId) {
-		hubService.deleteHub(hubId, userRole, userId);
-		return ResponseEntity.noContent().build();
-	}
 
 }
