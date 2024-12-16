@@ -25,16 +25,20 @@ import com.logistics.hub.application.service.CustomPrincipal;
 import com.logistics.hub.application.service.HubService;
 import com.logistics.hub.domain.enums.SortOption;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Hub-service API")
 @RequestMapping("/api/v1")
 public class HubController {
 	private final HubService hubService;
 
+	@Operation(summary = "허브 생성 ")
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@PostMapping("/hubs")
 	public ResponseEntity<HubCreateResDTO> createHub(
@@ -42,6 +46,7 @@ public class HubController {
 		return ResponseEntity.ok(hubService.createHub(request));
 	}
 
+	@Operation(summary = "허브 수정 ")
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@PutMapping("/hubs/{hubId}")
 	public ResponseEntity<HubUpdateResDTO> updateHub(
@@ -50,6 +55,7 @@ public class HubController {
 		return ResponseEntity.ok(hubService.updateHub(request, hubId));
 	}
 
+	@Operation(summary = "허브 담당자 등록(변경) ")
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@PutMapping("/hubs/{hubId}/manager")
 	public ResponseEntity<String> assignHubManager(
@@ -59,6 +65,7 @@ public class HubController {
 		return ResponseEntity.ok("Assigned manager to hub Successful");
 	}
 
+	@Operation(summary = "허브 삭제 ")
 	@PreAuthorize("hasAnyAuthority('MASTER')")
 	@DeleteMapping("/hubs/{hubId}")
 	public ResponseEntity<String> deleteHub(
@@ -68,12 +75,14 @@ public class HubController {
 		return ResponseEntity.ok("Hub successfully deleted");
 	}
 
+	@Operation(summary = "허브 단건 조회")
 	@GetMapping("/hubs/{hubId}")
 	public ResponseEntity<HubReadResDto> getHub(
 		@PathVariable(name = "hubId") UUID hubId) {
 		return ResponseEntity.ok(HubReadResDto.of(hubService.getHub(hubId)));
 	}
 
+	@Operation(summary = "허브 조회 검색")
 	@GetMapping("/hubs")
 	public ResponseEntity<Page<HubReadResDto>> searchHubs(
 		@RequestParam(value = "page", defaultValue = "1") int page,
@@ -84,11 +93,13 @@ public class HubController {
 		return ResponseEntity.ok(hubService.searchHubs(hubId, page - 1, size, keyword, sortOption));
 	}
 
+	@Operation(summary = "허브 확인")
 	@GetMapping("/hubs/{hubId}/exists")
 	public boolean checkHub(@PathVariable("hubId") UUID hubId) {
 		return hubService.checkHub(hubId);
 	}
 
+	@Operation(summary = "User ID로 담당허브 조회")
 	@GetMapping("/hubs/user/{userId}")
 	public UUID getUserHubId(@PathVariable("userId") long userId) {
 		log.info("getUserHubId Controller");
