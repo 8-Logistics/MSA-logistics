@@ -75,7 +75,9 @@ public class UserController {
         return userService.getUserInfo(userId);
     }
 
-
+    // user 검색, 조회 API
+    @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
+    @GetMapping("/users/userSearch")
     public ResponseEntity<?> searchUsers(UserSearchReqDto searchRequest,
                                                              Pageable pageable,
                                                              @AuthenticationPrincipal CustomPrincipal principal){

@@ -50,6 +50,12 @@ public class DeliveryManagerController {
         return deliveryManagerService.getDeliverySequence(hubId, deliverySequence);
     }
 
+    // [Feign] order 배송담당자 UUID로 userId return API
+    @GetMapping("/delivery-manager/{deliveryManagerId}/order")
+    public ResponseEntity<Long> getOrderUserId(@PathVariable UUID deliveryManagerId){
+        return ResponseEntity.ok(deliveryManagerService.getDeliveryManagerUserId(deliveryManagerId));
+    }
+
     // 배송 담당자 단건 조회 API
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/{deliveryManagerId}")

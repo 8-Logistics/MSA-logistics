@@ -4,6 +4,7 @@ import com.logistics.user.application.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 import java.util.UUID;
 
 public interface DeliveryManagerService {
@@ -24,4 +25,6 @@ public interface DeliveryManagerService {
 
     Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(DeliveryManagerSearchReqDto request, Pageable pageable
                 , String username, String role);
+
+    Long getDeliveryManagerUserId(UUID deliveryManagerId);
 }
