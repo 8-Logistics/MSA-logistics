@@ -112,6 +112,10 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
 
+        if(deliveryManager.getDeliveryStatus().getDescription() == deliveryStatus){
+            throw new IllegalArgumentException("전 상태와 같은 배송 status 입니다.");
+        }
+
         if(DeliveryStatus.IN_DELIVERY.toString().equals(deliveryStatus)){
             deliveryManager.updateDeliverySequence();
         }
