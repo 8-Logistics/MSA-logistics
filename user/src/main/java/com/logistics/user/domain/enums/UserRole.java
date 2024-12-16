@@ -17,14 +17,6 @@ public enum UserRole {
         this.authority = authority;
     }
 
-    public UserRole getRole(String roleName) {
-        for(UserRole role : values()) {
-            if(role.authority.equals(roleName)) {
-                return role;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value: " + roleName);
-    }
 
     public static class Authority {
 

@@ -1,5 +1,6 @@
 package com.logistics.user.application.service;
 
+import com.logistics.user.application.dto.TokenDto;
 import com.logistics.user.application.dto.UserSignInReqDto;
 import com.logistics.user.application.dto.UserSignUpReqDto;
 import com.logistics.user.domain.entity.User;
@@ -9,7 +10,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,29 +24,15 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final SecretKey secretKey;
+    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${spring.application.name}")
-    private String issuer;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${service.jwt.access-expiration}")
-    private Long accessExpiration;
-
-    @Value("${service.jwt.refresh-expiration}")
-    private Long refreshExpiration;
-
-    private final String BEARER = "Bearer ";
-
-
-    public AuthServiceImpl(UserRepository userRepository, @Value("${service.jwt.secret-key}") String secretKey, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional(readOnly = true)
     @Override
@@ -61,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    // TODO 임시로 void 형 받음, message 어떻게 할건지?
+
     @Transactional
     @Override
     public void signUp(UserSignUpReqDto userSignUpReqDto) {
@@ -80,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<?> signIn(UserSignInReqDto request) {
+    public TokenDto signIn(UserSignInReqDto request) {
 
         User user = userRepository.findByUsernameAndIsDeleteFalse(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("없는 ID 입니다."));
@@ -89,37 +78,54 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다");
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", createAccessToken(user.getUsername(), user.getRole().getAuthority()));
-        headers.set("Refresh-Authorization", createRefreshToken(user.getUsername(), user.getRole().getAuthority()));
+        String accessToken = tokenService.createAccessToken(user.getUsername(), user.getRole().getAuthority());
+        String refreshToken = tokenService.createRefreshToken(user.getUsername(), user.getRole().getAuthority());
 
-        return new ResponseEntity<>("login success", headers, HttpStatus.OK);
+        return TokenDto.createTokenHeaders(accessToken, refreshToken);
     }
 
+    @Override
+    public TokenDto validateRefreshToken(String refreshToken) {
 
-    // AccessToken 생성
-    public String createAccessToken(String username, String role) {
-        return BEARER + Jwts.builder()
-                .claim("X-User-Id", username)
-                .claim("X-Role", role)
-                .issuer(issuer)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
+        String extractRefreshToken = tokenService.extractToken(refreshToken);
+
+        if(extractRefreshToken == null){
+            throw new IllegalArgumentException("Invalid refreshToken");
+        }
+
+        // refreshToken 검증
+        String usernameAndRole = tokenService.checkRefreshToken(extractRefreshToken);
+
+        if(usernameAndRole == null) {
+            throw new IllegalArgumentException("Invalid refreshToken");
+        }
+
+        String[] userInfo = usernameAndRole.split(",");
+
+
+        // redis안의 값이 같은지 확인
+        if(!compareRefreshToken(userInfo[0], refreshToken)) {
+            throw new IllegalArgumentException("Invalid refreshToken or no Token In DB");
+        }
+
+        String accessToken = tokenService.createAccessToken(userInfo[0], userInfo[1]);
+
+        return TokenDto.createTokenHeaders(accessToken, null);
     }
 
-    // RefreshToken 생성
-    public String createRefreshToken(String username, String role) {
-        return BEARER + Jwts.builder()
-                .subject("RefreshToken")
-                .claim("X-User-Id", username)
-                .claim("X-Role", role)
-                .issuer(issuer)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
+    // Redis에 저장된 값을 가져와서 비교하는 메서드
+    private boolean compareRefreshToken(String username, String refreshToken) {
+        // Redis에서 저장된 refreshToken 가져오기
+        String redisKey = "UserRefreshToken::" + username;
+        String cachedToken = (String) redisTemplate.opsForValue().get(redisKey);
+
+        if (cachedToken != null) {
+            // Redis에서 가져온 값과 refresh 토큰 비교
+            return cachedToken.equals(refreshToken);
+        } else {
+            // Redis에 값이 없으면 false 반환
+            return false;
+        }
     }
 
 

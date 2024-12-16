@@ -2,13 +2,11 @@ package com.logistics.user.domain.entity;
 
 import com.logistics.user.application.dto.UserSignUpReqDto;
 import com.logistics.user.domain.enums.UserRole;
-import com.logistics.user.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
 
 @Entity
@@ -17,7 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,23 +40,35 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String slackId;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserStatus userStatus;
 
-
-    public static User create(UserSignUpReqDto request){
-        User user = User.builder()
+    public static User create(UserSignUpReqDto request) {
+        return User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .slackId(request.getSlackId())
                 .name(request.getName())
                 .role(UserRole.NORMAL)
-                .userStatus(UserStatus.NONE)
                 .build();
-
-        return user;
     }
+
+    public void userModify(String slackId, String name, String email){
+        if(slackId != null && !slackId.isEmpty()){
+            this.slackId = slackId;
+        }
+        if(name != null && !name.isEmpty()){
+            this.name = name;
+        }
+        if(email != null && !email.isEmpty()){
+            this.email = email;
+        }
+
+    }
+
+    public void modifyRole(UserRole role){
+        this.role = role;
+    }
+
+
 
 }

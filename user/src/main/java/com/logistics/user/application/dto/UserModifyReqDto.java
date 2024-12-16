@@ -1,6 +1,6 @@
 package com.logistics.user.application.dto;
 
-import com.logistics.user.domain.enums.UserRole;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserUpdateReqDto {
+public class UserModifyReqDto {
 
+    @NotBlank
     private String password;
     private String email;
     private String slackId;
     private String name;
-    private UserRole role;
 
 }
