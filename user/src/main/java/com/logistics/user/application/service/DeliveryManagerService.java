@@ -16,7 +16,7 @@ public interface DeliveryManagerService {
 
     void updateDeliveryStatus(UUID deliveryManagerId, String deliveryStatus);
 
-    DeliverySequenceDto getDeliverySequence(UUID hubId, long deliverySequence);
+    DeliverySequenceDto getDeliverySequence(UUID hubId);
 
     DeliveryManagerSearchResDto getDeliveryManager(UUID deliveryManagerId);
 

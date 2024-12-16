@@ -32,32 +32,43 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         User user = userRepository.findByIdAndRoleAndIsDeleteFalse(request.getUserId(), UserRole.NORMAL)
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
-        // role이 허브 매니저일때 & 업체 배송 담당자
-        if(role.equals(UserRole.HUB_MANAGER.toString()) && request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
+        if(request.getDeliveryManagerType() == DeliveryManagerType.HUB_DELIVERY){
 
-            // Hub Manager 찾는다.
-            User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
-                    .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
-
-            try{
-                // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
-                if(!hubFeignService.getUserHubId(hubManageruser.getId()).equals(request.getSourceHubId())){
-                    throw new IllegalArgumentException("다른 허브의 배송 담당자 입니다.");
-                }
-            }catch(Exception e){
-                // FeignError
-                throw new IllegalArgumentException("허브 매니저가 없습니다.");
+            if(request.getSourceHubId() != null){
+                throw new IllegalArgumentException("허브 배송 담당자는 HubId를 parameter 에서 빼고 요청해주세요.");
             }
 
-        }
+            if(role.equals(UserRole.HUB_MANAGER.toString())){
+                throw new IllegalArgumentException("허브 배송 담당자는 HUB_MANAGER가 바꾸지 못합니다.");
+            }
 
-        // 로그인 role이 Master일때 업체 배송 담당자
-        if(request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
 
-                if(!hubFeignService.checkHub(request.getSourceHubId())){
-                    throw new IllegalArgumentException("Hub Not Found");
+        }else{
+
+            if(request.getSourceHubId() == null){
+                throw new IllegalArgumentException("업체 배송 담당자는 HubId를 parameter에 추가해야 합니다.");
+            }
+
+            if(role.equals(UserRole.HUB_MANAGER.toString())){
+                // Hub Manager 찾는다.
+                User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
+                        .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
+
+                try{
+                    // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
+                    if(!hubFeignService.getUserHubId(hubManageruser.getId()).equals(request.getSourceHubId())){
+                        throw new IllegalArgumentException("다른 허브의 배송 담당자 입니다.");
+                    }
+                }catch(Exception e){
+                    // FeignError
+                    throw new IllegalArgumentException("허브 매니저가 없습니다.");
                 }
+            }
 
+            // 허브 id 있는지 체크
+            if(!hubFeignService.checkHub(request.getSourceHubId())){
+                throw new IllegalArgumentException("Hub Not Found");
+            }
 
         }
 
@@ -77,7 +88,11 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
 
         // role이 허브 매니저일때 & 배송담당자가 허브 배송담당자가 아닐때
-        if(role.equals(UserRole.HUB_MANAGER.toString()) && deliveryManager.getSourceHubId() != null){
+        if(role.equals(UserRole.HUB_MANAGER.toString())){
+
+            if(deliveryManager.getSourceHubId() == null){
+                throw new IllegalArgumentException("sourceHubId를 추가해주세요");
+            }
 
             User user = userRepository.findByUsernameAndIsDeleteFalse(username)
                     .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
@@ -90,8 +105,6 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
                 // Feign Error
                 throw new IllegalArgumentException("Hub Feign Error");
             }
-
-
 
         }
 
@@ -109,7 +122,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndIsDeleteFalse(deliveryManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryManager Not Found"));
 
-        if(deliveryManager.getDeliveryStatus().getDescription() == deliveryStatus){
+        if(deliveryManager.getDeliveryStatus().getDescription().equals(deliveryStatus)){
             throw new IllegalArgumentException("전 상태와 같은 배송 status 입니다.");
         }
 
@@ -122,12 +135,12 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     @Transactional(readOnly = true)
     @Override
-    public DeliverySequenceDto getDeliverySequence(UUID hubId, long deliverySequence) {
+    public DeliverySequenceDto getDeliverySequence(UUID hubId) {
 
         // 허브 배송담당자
         if(hubId == null){
             DeliveryManager deliveryManager = deliveryManagerRepository
-                    .findTopBySourceHubIdIsNullAndIsDeleteFalseAndDeliverySequenceGreaterThanOrderByDeliverySequenceAscCreatedAtAsc(deliverySequence)
+                    .findTopBySourceHubIdIsNullAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc()
                     .orElseThrow(() -> new IllegalArgumentException("배송이 가능한 허브 배송 담당자가 없습니다."));
 
             return DeliverySequenceDto.toResponse(deliveryManager.getId(), deliveryManager.getDeliverySequence());
@@ -136,7 +149,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
         // 업체 배송 담당자
         DeliveryManager deliveryManager = deliveryManagerRepository
-                .findTopBySourceHubIdAndIsDeleteFalseAndDeliverySequenceGreaterThanOrderByDeliverySequenceAscCreatedAtAsc(hubId, deliverySequence)
+                .findTopBySourceHubIdAndIsDeleteFalseOrderByDeliverySequenceAscCreatedAtAsc(hubId)
                 .orElseThrow(() -> new IllegalArgumentException("배송이 가능한 업체 배송 담당자가 없습니다."));
 
         return DeliverySequenceDto.toResponse(deliveryManager.getId(), deliveryManager.getDeliverySequence());
@@ -168,53 +181,44 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
             throw new IllegalArgumentException("이미 같은 배송 타입의 배송담당자입니다.");
         }
 
-        // 허브 매니저가 허브 담당 배송담당자에서 -> 업체 배송담당자로 변경
-        if(role.equals(UserRole.HUB_MANAGER.getAuthority()) && request.getSourceHubId() != null){
+        // 현재 업체 배송 담당자 -> 허브 배송 담당자
+        if(deliveryManager.getSourceHubId() != null){
 
-            if(deliveryManager.getSourceHubId() != null){
+            if(request.getSourceHubId() != null){
+                throw new IllegalArgumentException("이미 같은 배송 타입의 배송담당자입니다.");
+            }
+        // 현재 허브 배송 담당자 -> 업체 배송 담당자
+        }else{
+            if(request.getSourceHubId() == null){
                 throw new IllegalArgumentException("이미 같은 배송 타입의 배송담당자입니다.");
             }
 
-            User HubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
-                    .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
+            // 허브 매니저일때
+            if(role.equals(UserRole.HUB_MANAGER.getAuthority())) {
+                User HubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
+                        .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
 
 
-            try{
-                // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
-                if(!hubFeignService.getUserHubId(HubManageruser.getId()).equals(request.getSourceHubId())){
-                    throw new IllegalArgumentException("다른 허브의 업체 배송 담당자 수정 요청입니다.");
+                try{
+                    // request의 HubId와 허브 매니저의 hubid가 같지 않으면 error
+                    if(!hubFeignService.getUserHubId(HubManageruser.getId()).equals(request.getSourceHubId())){
+                        throw new IllegalArgumentException("다른 허브의 업체 배송 담당자입니다.");
+                    }
+                }catch(Exception e){
+                    // FeignError
+                    throw new IllegalArgumentException("Hub Feign Error.");
                 }
-            }catch(Exception e){
-                // FeignError
-                throw new IllegalArgumentException("Hub Feign Error.");
-            }
+            // Master일때
+            }else{
 
-        }
-
-        // Master가 허브 담당 배송담당자에서 -> 업체 배송담당자로 변경
-        if(role.equals(UserRole.MASTER.getAuthority()) && request.getSourceHubId() != null){
-
-            if(deliveryManager.getSourceHubId() != null){
-                throw new IllegalArgumentException("이미 같은 업체 배송 타입의 배송담당자입니다.");
-            }
-
-            try{
-                if(!hubFeignService.checkHub(request.getSourceHubId())){
-                    throw new IllegalArgumentException("Hub Not Found");
+                try{
+                    if(!hubFeignService.checkHub(request.getSourceHubId())){
+                        throw new IllegalArgumentException("Hub Not Found");
+                    }
+                }catch(Exception e){
+                    // FeignError
+                    throw new IllegalArgumentException("Hub Feign Error");
                 }
-            }catch(Exception e){
-                // FeignError
-                throw new IllegalArgumentException("Hub Feign Error");
-            }
-
-
-        }
-
-        // MASTER가 업체 담당 -> 허브 배송담당자로 변경
-        if(role.equals(UserRole.MASTER.getAuthority()) && request.getSourceHubId() == null) {
-
-            if(deliveryManager.getSourceHubId() == null){
-                throw new IllegalArgumentException("이미 같은 허브 배송 타입의 배송담당자입니다.");
             }
 
         }
@@ -232,7 +236,11 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
     public Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
             DeliveryManagerSearchReqDto request, Pageable pageable, String username, String role) {
 
-        if(role.equals(UserRole.HUB_MANAGER.getAuthority()) && !request.getHubIdList().isEmpty()){
+        if(role.equals(UserRole.HUB_MANAGER.getAuthority())){
+
+            if(request.getHubIdList().isEmpty()){
+                throw new IllegalArgumentException("HUB_MANAGER 권한일때 HubIdList 추가해주세요");
+            }
 
             User hubManageruser = userRepository.findByUsernameAndIsDeleteFalse(username)
                     .orElseThrow(() -> new IllegalArgumentException("HubManager is Not Found"));
