@@ -89,7 +89,7 @@ public class DeliveryManagerCustomRepositoryImpl implements DeliveryManagerCusto
         } else if (minSequence != null) {
             return deliveryManager.deliverySequence.goe(minSequence); // minSequence 이상인 값
         } else if (maxSequence != null) {
-            return deliveryManager.deliverySequence.loe(maxSequence); // maxSequence 이상인 값
+            return deliveryManager.deliverySequence.loe(maxSequence); // maxSequence 이하인 값
         } else {
             return null;
         }
