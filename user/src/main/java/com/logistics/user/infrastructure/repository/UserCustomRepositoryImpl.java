@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     // 값이 있는 userId 데이터 가져오기
     private BooleanExpression checkUserId(List<Long> userIdList) {
-        return !userIdList.isEmpty() ? user.id.in(userIdList) : null;
+        return !CollectionUtils.isEmpty(userIdList)? user.id.in(userIdList) : null;
     }
 
     // 로그인 Id, email, slackId, name으로 검색

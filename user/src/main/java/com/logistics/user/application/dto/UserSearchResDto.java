@@ -1,6 +1,7 @@
 package com.logistics.user.application.dto;
 
 import com.logistics.user.domain.entity.User;
+import com.logistics.user.domain.enums.UserRole;
 import lombok.*;
 
 @Getter
@@ -14,7 +15,7 @@ public class UserSearchResDto {
     private String email;
     private String slackId;
     private String name;
-    private String role;
+    private UserRole role;
 
     public static UserSearchResDto toUserResponse(User user){
         return UserSearchResDto.builder()
@@ -23,7 +24,7 @@ public class UserSearchResDto {
                 .email(user.getEmail())
                 .slackId(user.getSlackId())
                 .name(user.getName())
-                .role(user.getRole().toString())
+                .role(user.getRole())
                 .build();
     }
 
