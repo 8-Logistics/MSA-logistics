@@ -120,6 +120,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                     } else {
                         orderSpecifiers.add(user.createdAt.desc());
                     }
+                    break;
                 }
                 case "updatedAt" -> {
                     if (direction == Sort.Direction.ASC) {
@@ -127,6 +128,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                     } else {
                         orderSpecifiers.add(user.updatedAt.desc());
                     }
+                    break;
                 }
                 default -> {
                     // 기본적으로 createdAt으로 정렬 (DESC)

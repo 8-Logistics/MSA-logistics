@@ -14,7 +14,7 @@ import java.util.List;
 
 public class QueryDslPageableResolver extends PageableHandlerMethodArgumentResolver {
 
-    public static final List<Integer> ALLOWED_PAGE_SIZES = Arrays.asList(10, 20, 50);
+    public static final List<Integer> ALLOWED_PAGE_SIZES = Arrays.asList(10, 30, 50);
     public static final int DEFAULT_PAGE_SIZE = 10;
     public static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.DESC, "createdAt");
 
