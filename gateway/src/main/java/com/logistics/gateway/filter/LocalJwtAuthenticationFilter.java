@@ -43,6 +43,10 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
+        if(path.contains("/swagger-ui") || path.contains("/v3/api-docs")){
+            return chain.filter(exchange);
+        }
+
         String token = extractToken(exchange);
 
         if (token == null || !validateToken(token, exchange)) {
