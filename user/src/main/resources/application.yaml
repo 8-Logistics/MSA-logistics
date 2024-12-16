@@ -5,9 +5,9 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/8logistics
-    username: sunghun
-    password: 12345
+    url: jdbc:mysql://localhost:3306/msa
+    username: default
+    password: systempass
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
