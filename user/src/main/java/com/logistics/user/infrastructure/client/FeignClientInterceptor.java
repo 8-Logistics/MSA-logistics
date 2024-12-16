@@ -15,10 +15,14 @@ public class FeignClientInterceptor implements RequestInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Java 16부터 도입된 pattern matching 기능이라고 한다. 변수가 자동으로 캐스팅되어 저장된다고 함.
-        if (authentication != null && authentication.getPrincipal() instanceof CustomPrincipal customPrincipal) {
+        if (authentication != null && authentication.getPrincipal() instanceof CustomPrincipal) {
 
-            String username = customPrincipal.getUserId();
-            String role = customPrincipal.getRole();
+            CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+
+            String username = principal.getUserId();
+            String role = principal.getRole();
+
+            System.out.println("username = " +  username + " role = " + role);
 
             requestTemplate.header("X-User-Id", username);
             requestTemplate.header("X-Role", role);
