@@ -15,7 +15,7 @@ public class DeliveryManagerSearchResDto {
     private String deliveryManagerId;
     private String deliveryManagerType;
     private String sourceHubId;
-    private long deliverySequence;
+    private Long deliverySequence;
     private String deliveryStatus;
 
 

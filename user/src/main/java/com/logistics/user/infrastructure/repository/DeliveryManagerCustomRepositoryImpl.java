@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class DeliveryManagerCustomRepositoryImpl implements DeliveryManagerCusto
 
     // 허브 id로 검색 조건
     private BooleanExpression checkHubId(List<UUID> hubIdList) {
-        return !hubIdList.isEmpty() ? deliveryManager.sourceHubId.in(hubIdList) : null;
+        return !CollectionUtils.isEmpty(hubIdList) ? deliveryManager.sourceHubId.in(hubIdList) : null;
     }
 
     // 배송 담당자 타입으로 검색
