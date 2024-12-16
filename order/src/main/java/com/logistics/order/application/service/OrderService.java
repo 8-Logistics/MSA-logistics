@@ -38,7 +38,7 @@ public class OrderService {
     private UserFeignClient userFeignClient;
     @Autowired
     private VendorFeignClient vendorFeignClient;
-    private SlackService slackService;
+    private final SlackService slackService;
 
     @Transactional
     public OrderCreateResDto createOrder(OrderCreateReqDto request, String userId) {
@@ -59,7 +59,7 @@ public class OrderService {
         // deliveryId로 user > user 이름, 메일 주소 가져오기
         OrderUserResDto orderUserDto = userFeignClient.getUserInfo(userId);
 
-        OrderToDeliveryReqDto orderToDeliveryReqDto = OrderToDeliveryReqDto.from(orderProductResDto, productVendorAddress, orderUserDto);
+        OrderToDeliveryReqDto orderToDeliveryReqDto = OrderToDeliveryReqDto.from(request.getReceiveVendorId(), orderProductResDto, productVendorAddress, orderUserDto);
 
 
         try {
@@ -68,7 +68,7 @@ public class OrderService {
 
             String deliveryManagerId = userFeignClient.getDeliveryManagerUserId(orderDeliveryResDto.getHubDeliveryManagerId());
             DeliveryUserResDto deliveryUserResDto = userFeignClient.getDeliveryUserInfo(deliveryManagerId);
-            order = order.createOrder(order, orderProductResDto, userId, orderDeliveryResDto);
+            order = order.createOrder(orderDeliveryResDto.getOrderId(), order, orderProductResDto, userId, orderDeliveryResDto);
 
             OrderToAiReqDto orderToAiReqDto = OrderToAiReqDto.from(order, orderUserDto, productVendorAddress,
                     orderDeliveryResDto, deliveryUserResDto, orderProductResDto.getProductName());
