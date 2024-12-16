@@ -65,9 +65,11 @@ public class HubService {
 		UserRoleUpdateDto dto = new UserRoleUpdateDto();
 		dto.setSourceHubId(hubId);
 		try {
-			userService.updateUserRole(userId, dto);
+			if (!userService.updateUserRole(userId, dto)) {
+				throw new IllegalStateException("User role update failed: Service returned false");
+			}
 		} catch (FeignException e) {
-			throw new IllegalArgumentException("Failed to update user role", e);
+			throw new IllegalArgumentException("Failed to update user role due to external service error", e);
 		}
 		hub.assignHubManager(userId);
 	}
