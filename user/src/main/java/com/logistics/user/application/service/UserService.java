@@ -15,7 +15,7 @@ public interface UserService {
 
     boolean updateUserRole(Long userId, UserRoleUpdateDto request);
 
-    OrderUserDto getUserInfo(Long userId);
+    OrderUserDto getUserInfo(String userId);
 
     Page<UserSearchResDto> searchUsers(UserSearchReqDto searchRequest,
                                                        Pageable pageable, String userId, String role);

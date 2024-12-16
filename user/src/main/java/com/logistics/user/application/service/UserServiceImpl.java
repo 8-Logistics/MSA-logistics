@@ -80,9 +80,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public OrderUserDto getUserInfo(Long userId) {
+    public OrderUserDto getUserInfo(String userName) {
 
-        User user = userRepository.findByIdAndIsDeleteFalse(userId)
+        User user = userRepository.findByUsernameAndIsDeleteFalse(userName)
                 .orElseThrow(() -> new IllegalArgumentException("user Not Found"));
 
         return OrderUserDto.toResponse(user.getName(), user.getSlackId(), user.getEmail());

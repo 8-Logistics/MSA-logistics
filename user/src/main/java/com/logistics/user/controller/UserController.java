@@ -46,7 +46,6 @@ public class UserController {
     }
 
     /**
-     * TODO 공통 응답으로 다 바꾸기!!
      *  사용자 수정 API
      *
      * @param userId
@@ -70,9 +69,9 @@ public class UserController {
     }
 
     // [Feign] order 주문에 slackId & 이름 return API
-    @GetMapping("/users/userInfo/{userId}")
-    public OrderUserDto getUserInfo(@PathVariable("userId") Long userId) {
-        return userService.getUserInfo(userId);
+    @GetMapping("/users/userInfo/{userName}")
+    public OrderUserDto getUserInfo(@PathVariable("userName") String userName) {
+        return userService.getUserInfo(userName);
     }
 
     // user 검색, 조회 API
