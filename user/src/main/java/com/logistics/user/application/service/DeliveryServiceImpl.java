@@ -23,7 +23,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
     private final DeliveryManagerRepository deliveryManagerRepository;
     private final UserRepository userRepository;
-    private HubFeignService hubFeignService;
+    private final HubFeignService hubFeignService;
 
     @Transactional
     @Override
@@ -53,14 +53,11 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
 
         // 로그인 role이 Master일때 업체 배송 담당자
         if(request.getSourceHubId() != null && request.getDeliveryManagerType() == DeliveryManagerType.VENDOR_DELIVERY){
-            try{
+
                 if(!hubFeignService.checkHub(request.getSourceHubId())){
                     throw new IllegalArgumentException("Hub Not Found");
                 }
-            }catch(Exception e){
-                // FeignError
-                throw new IllegalArgumentException("Hub Feign Error");
-            }
+
 
         }
 
