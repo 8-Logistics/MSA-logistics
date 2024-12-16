@@ -15,8 +15,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "p_orders")
 public class Order extends BaseEntity {
-    @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
     @Column(name="order_id")
     private UUID orderId;
 

@@ -59,13 +59,14 @@ public class OrderService {
         // deliveryId로 user > user 이름, 메일 주소 가져오기
         OrderUserResDto orderUserDto = userFeignClient.getUserInfo(userId);
 
-        OrderToDeliveryReqDto orderToDeliveryReqDto = OrderToDeliveryReqDto.from(order, orderProductResDto, productVendorAddress, orderUserDto);
+        OrderToDeliveryReqDto orderToDeliveryReqDto = OrderToDeliveryReqDto.from(orderProductResDto, productVendorAddress, orderUserDto);
 
 
         try {
+
             OrderDeliveryResDto orderDeliveryResDto = deliveryFeignClient.createDelivery(orderToDeliveryReqDto);
 
-            String deliveryManagerId = userFeignClient.getDeliveryManagerUserId(orderDeliveryResDto.getDeliveryManagerId());
+            String deliveryManagerId = userFeignClient.getDeliveryManagerUserId(orderDeliveryResDto.getHubDeliveryManagerId());
             DeliveryUserResDto deliveryUserResDto = userFeignClient.getDeliveryUserInfo(deliveryManagerId);
             order = order.createOrder(order, orderProductResDto, userId, orderDeliveryResDto);
 
