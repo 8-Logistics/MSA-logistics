@@ -12,5 +12,7 @@ public class DeliveryCreateResDto {
     private final UUID deliveryId;
     private final UUID orderId;
     private final UUID deliveryPathId;
+    private final String sourceHubAddress; // 주소로 변경
+    private final UUID hubDeliveryManagerId;
 }
 

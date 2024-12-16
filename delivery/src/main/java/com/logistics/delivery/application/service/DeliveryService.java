@@ -11,6 +11,7 @@ import com.logistics.delivery.infrastructure.client.UserClient;
 import com.logistics.delivery.infrastructure.client.VendorClient;
 import com.logistics.delivery.infrastructure.client.dto.DeliveryManagerResDto;
 import com.logistics.delivery.infrastructure.client.dto.HubPathResDto;
+import com.logistics.delivery.infrastructure.client.dto.HubResDto;
 import com.logistics.delivery.infrastructure.client.dto.VendorResDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,11 @@ public class DeliveryService {
     // 허브 경로 정보 가져오기
     public HubPathResDto getExactHubPath(UUID sourceHubId, UUID destinationHubId) {
         return hubClient.getExactHubPath(sourceHubId, destinationHubId);
+    }
+
+    // 허브 id로 허브 주소 가져오기
+    public HubResDto getHub(UUID hubId) {
+        return hubClient.getHub(hubId);
     }
 
     // 업체 담당 허브 정보 가져오기
@@ -92,6 +98,8 @@ public class DeliveryService {
                 .deliveryId(delivery.getId())
                 .orderId(delivery.getOrderId())
                 .deliveryPathId(deliveryPath.getId())
+                .sourceHubAddress(getHub(request.getSourceHubId()).getAddress())
+                .hubDeliveryManagerId(hubManager.getDeliveryManagerId())
                 .build();
     }
 
