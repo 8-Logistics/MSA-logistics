@@ -19,7 +19,7 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping("/deliveries")
-    @PreAuthorize("hasRole('MASTER')")
+    @PreAuthorize("hasAnyAuthority('MASTER')")
     public ApiResponse<DeliveryCreateResDto> createDelivery(@RequestBody @Valid DeliveryCreateReqDto request) {
 
         DeliveryCreateResDto response = deliveryService.createDelivery(request);
@@ -28,7 +28,7 @@ public class DeliveryController {
     }
 
     @PatchMapping("/deliveries/{deliveryId}")
-    @PreAuthorize("hasRole('MASTER') or hasRole('HUB_MANAGER') or hasRole('DELIVERY_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER','DELIVERY_MANAGER')")
     public ApiResponse<DeliveryUpdateResDto> updateDeliveryStatus(
             @PathVariable UUID deliveryId,
             @RequestBody @Valid DeliveryUpdateReqDto request) {
@@ -37,7 +37,7 @@ public class DeliveryController {
     }
 
     @DeleteMapping("/deliveries/{deliveryId}")
-    @PreAuthorize("hasRole('MASTER')")
+    @PreAuthorize("hasAnyAuthority('MASTER')")
     public ApiResponse<String> deleteDelivery(@PathVariable UUID deliveryId) {
         deliveryService.deleteDelivery(deliveryId);
         return ApiResponse.success("배송 삭제 성공");
