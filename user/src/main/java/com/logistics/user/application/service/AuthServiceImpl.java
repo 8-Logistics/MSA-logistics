@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    // TODO 임시로 void 형 받음, message 어떻게 할건지?
+
     @Transactional
     @Override
     public void signUp(UserSignUpReqDto userSignUpReqDto) {
@@ -67,7 +67,6 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(User.create(userSignUpReqDto));
     }
 
-    // TODO dto만들어 access, refreshtoken 담아 return 하기
     @Transactional(readOnly = true)
     @Override
     public TokenDto signIn(UserSignInReqDto request) {
@@ -88,14 +87,21 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenDto validateRefreshToken(String refreshToken) {
 
+        String extractRefreshToken = tokenService.extractToken(refreshToken);
+
+        if(extractRefreshToken == null){
+            throw new IllegalArgumentException("Invalid refreshToken");
+        }
+
         // refreshToken 검증
-        String usernameAndRole = tokenService.checkRefreshToken(refreshToken);
+        String usernameAndRole = tokenService.checkRefreshToken(extractRefreshToken);
+
+        if(usernameAndRole == null) {
+            throw new IllegalArgumentException("Invalid refreshToken");
+        }
 
         String[] userInfo = usernameAndRole.split(",");
 
-        if(userInfo[0] == null) {
-            throw new IllegalArgumentException("Invalid refreshToken");
-        }
 
         // redis안의 값이 같은지 확인
         if(!compareRefreshToken(userInfo[0], refreshToken)) {
@@ -108,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // Redis에 저장된 값을 가져와서 비교하는 메서드
-    public boolean compareRefreshToken(String username, String refreshToken) {
+    private boolean compareRefreshToken(String username, String refreshToken) {
         // Redis에서 저장된 refreshToken 가져오기
         String redisKey = "UserRefreshToken::" + username;
         String cachedToken = (String) redisTemplate.opsForValue().get(redisKey);

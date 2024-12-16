@@ -35,7 +35,7 @@ public class AuthController {
         servletRequest.setAttribute("username", request.getUsername());
         authService.signUp(request);
 
-        return ResponseEntity.ok("회원가입 성공");
+        return ResponseEntity.ok(ApiResponse.success("회원가입 Success"));
     }
 
     @PostMapping("/auth/signIn")

@@ -1,5 +1,6 @@
 package com.logistics.user.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 
 @Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> implements Serializable {
 
     private int statusCode;

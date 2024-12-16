@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ServerWebExchange;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -60,7 +59,7 @@ public class TokenService {
                 .compact();
     }
 
-    private String extractToken(String refreshToken) {
+    public String extractToken(String refreshToken) {
         if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
             return refreshToken.substring(7);
         }
@@ -74,9 +73,6 @@ public class TokenService {
                     .build().parseSignedClaims(refreshToken);
 
             if(claimsJws.getPayload().getSubject() == null) {
-
-                System.out.println("###### : claimsJws.getPayload().getSubject() : " + claimsJws.getPayload().getSubject());
-
                 return null;
             }
 
