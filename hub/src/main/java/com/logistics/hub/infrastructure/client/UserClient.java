@@ -14,7 +14,7 @@ public interface UserClient extends UserService {
 
 	@PutMapping("/api/v1/users/{userId}/role")
 	boolean updateUserRole(
-		@PathVariable("userId") int userId,
+		@PathVariable("userId") long userId,
 		@RequestBody UserRoleUpdateDto request
 	);
 

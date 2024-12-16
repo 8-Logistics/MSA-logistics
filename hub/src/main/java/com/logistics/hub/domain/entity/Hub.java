@@ -48,7 +48,7 @@ public class Hub extends BaseEntity {
 	private Double longitude;
 
 	@Column(name = "manager_id")
-	private int managerId;
+	private long managerId;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "source_hub_id")
@@ -78,7 +78,7 @@ public class Hub extends BaseEntity {
 		}
 	}
 
-	public void assignHubManager(int userId) {
+	public void assignHubManager(long userId) {
 		this.managerId = userId;
 	}
 
