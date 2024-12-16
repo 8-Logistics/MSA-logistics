@@ -9,5 +9,5 @@ import java.util.UUID;
 @NoArgsConstructor
 public class VendorResDto {
 
-    private UUID vendorHubId;
+    private UUID sourceHubId;
 }
