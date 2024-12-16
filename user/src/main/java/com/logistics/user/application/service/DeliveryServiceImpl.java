@@ -226,6 +226,7 @@ public class DeliveryServiceImpl implements DeliveryManagerService{
         return DeliveryManagerSearchResDto.toResponse(deliveryManager);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<DeliveryManagerSearchResDto> getDeliveryManagerSearch(
             DeliveryManagerSearchReqDto request, Pageable pageable, String username, String role) {

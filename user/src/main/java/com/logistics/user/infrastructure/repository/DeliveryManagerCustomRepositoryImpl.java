@@ -1,11 +1,10 @@
-package com.logistics.user.domain.repository;
+package com.logistics.user.infrastructure.repository;
 
 import com.logistics.user.application.dto.DeliveryManagerSearchReqDto;
 import com.logistics.user.application.dto.DeliveryManagerSearchResDto;
 import com.logistics.user.domain.entity.QDeliveryManager;
 import com.logistics.user.domain.enums.DeliveryManagerType;
 import com.logistics.user.domain.enums.DeliveryStatus;
-import com.logistics.user.infrastructure.repository.DeliveryManagerCustomRepository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
