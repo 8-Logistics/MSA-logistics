@@ -25,10 +25,10 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{userId}")
-    public ResponseEntity<UserSearchResDto> findUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<?> findUser(@PathVariable("userId") Long userId) {
 
         UserSearchResDto response = userService.findUser(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("user 단건 조회 success", response));
     }
 
     /**
@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
 
         userService.deleteUser(userId);
-        return ResponseEntity.ok("사용자 삭제 성공");
+        return ResponseEntity.ok(ApiResponse.success("user delete success"));
     }
 
     /**
@@ -59,7 +59,7 @@ public class UserController {
 
         UserSearchResDto response = userService.modifyUser(userId, request);
 
-        return ResponseEntity.ok("수정이 완료 되었습니다.");
+        return ResponseEntity.ok(ApiResponse.success("user 수정 success", response));
     }
 
     // [Feign] 허브 담당자 & 업체 담당자 role 수정 API
@@ -76,13 +76,13 @@ public class UserController {
     }
 
 
-    public ResponseEntity<Page<UserSearchResDto>> searchUsers(UserSearchReqDto searchRequest,
+    public ResponseEntity<?> searchUsers(UserSearchReqDto searchRequest,
                                                              Pageable pageable,
                                                              @AuthenticationPrincipal CustomPrincipal principal){
 
         Page<UserSearchResDto> response = userService.searchUsers(searchRequest, pageable, principal.getUserId(), principal.getRole());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("user 조회/검색 success", response));
     }
 
 
