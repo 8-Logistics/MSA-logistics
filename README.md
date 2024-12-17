@@ -9,7 +9,7 @@
 ---
 
 ## 🧑🏻‍💻 팀원 역할 분담
-- **민지수** : product-service, order-service
+- **민지수** : product-service, order-service(Slack, Gemini) 
 - **김성훈** : gateway, user-service
 - **서연주** : Hub-service, vendor-service
 - **박강현** : Delivery-service
@@ -18,12 +18,12 @@
 ## ✔️ MSA 구성
 - **server** : 유레카 서버
 - **gateway** : 게이트웨이
-- **user-service** : 사용자, 권한, 배달 담당자 서비스
-- **hub-service** : 허브, 허브 경로 서비스
-- **vendor-service** : 업체 서비스
-- **product-service** : 상품 서비스
-- **order-service** : 주문, 슬랙 서비스
-- **delivery-service** : 배송, 배송 경로 서비스
+- **user-service** : 사용자, 권한, 배달 담당자 서비스 (/api/v1/users, /api/v1/delivery-manager)
+- **hub-service** : 허브, 허브 경로 서비스 (/api/v1/hubs, /api/v1/hubPaths)
+- **vendor-service** : 업체 서비스 (/api/v1/vendors)
+- **product-service** : 상품 서비스 (/api/v1/products)
+- **order-service** : 주문, 슬랙 서비스 (/api/v1/orders)
+- **delivery-service** : 배송, 배송 경로 서비스 (/api/v1/deliveries, /api/v1/deliveryPaths)
 
 ---
 
