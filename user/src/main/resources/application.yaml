@@ -12,9 +12,9 @@ spring:
       password: systempass
 
   datasource:
-    url: jdbc:mysql://localhost:3306/msa
-    username: default
-    password: systempass
+    url: jdbc:mysql://localhost:3306/8logistics
+    username: sunghun
+    password: 12345
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

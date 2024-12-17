@@ -9,22 +9,52 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: vendor-service-doc
+          uri: lb://vendor-service
+          predicates:
+            - Path=/api/v1/vendors/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/vendors/v3/api-docs, /v3/api-docs
         - id: vendor-service
           uri: lb://vendor-service
           predicates:
             - Path=/api/v1/vendors/**
+        - id: product-service-doc
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/products/v3/api-docs, /v3/api-docs
         - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/api/v1/products/**
+        - id: order-service-doc
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/orders/v3/api-docs, /v3/api-docs
         - id: order-service  # 라우트 식별자
           uri: lb://order-service
           predicates:
             - Path=/api/v1/orders/**, /api/v1/noties/**
+        - id: hub-service-doc
+          uri: lb://hub-service
+          predicates:
+            - Path=/api/v1/hubs/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/hubs/v3/api-docs, /v3/api-docs
         - id: hub-service  # 라우트 식별자
           uri: lb://hub-service
           predicates:
             - Path=/api/v1/hubs/**, /api/v1/hubPaths/**
+        - id: delivery-service-doc
+          uri: lb://delivery-service
+          predicates:
+            - Path=/api/v1/deliveries/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/deliveries/v3/api-docs, /v3/api-docs
         - id: delivery-service  # 라우트 식별자
           uri: lb://delivery-service
           predicates:
@@ -52,8 +82,6 @@ springdoc:
   swagger-ui:
     use-root-path: true
     urls:
-      - name: auth-service
-        url: /api/v1/auth/v3/api-docs
       - name: user-service
         url: /api/v1/users/v3/api-docs
       - name: hub-service
