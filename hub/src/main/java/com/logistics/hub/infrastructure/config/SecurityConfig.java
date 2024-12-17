@@ -1,7 +1,9 @@
 package com.logistics.hub.infrastructure.config;
 
+import java.util.Collections;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.logistics.hub.infrastructure.filter.CustomAuthorizationFilter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -29,10 +34,9 @@ public class SecurityConfig {
 
 	// SWAGGER는 들어 갈 수 있게 제외한다.
 	private final List<String> SWAGGER = List.of(
-		"/swagger-ui.html",
-		"/swagger-ui/**",
-		"/api/v1/hubs/v3/api-docs/**",
-		"/webjars/swagger-ui/**"
+			"/swagger-ui.html",
+			"/swagger-ui/**",
+			"/v3/**"
 	);
 
 	@Bean
@@ -48,27 +52,30 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		// CSRF 설정
-		http.csrf((csrf) -> csrf.disable())
-			.httpBasic(AbstractHttpConfigurer::disable)
-			.formLogin(AbstractHttpConfigurer::disable)
+		http
+				.csrf((csrf) -> csrf.disable())
+				.httpBasic(AbstractHttpConfigurer::disable)
+				.formLogin(AbstractHttpConfigurer::disable)
 		;
 
 		// 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
 		http.sessionManagement((sessionManagement) ->
-			sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		);
 
 		http.authorizeHttpRequests((authorizeHttpRequests) ->
-			authorizeHttpRequests
-				.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-				.permitAll() // resources 접근 허용 설정
-				.requestMatchers("/api/v1/auth/**").permitAll() // TODO 이거 안넣으셔도 됩니다.
-				.requestMatchers(SWAGGER.toArray(new String[0])).permitAll()
-				.anyRequest().authenticated()
+				authorizeHttpRequests
+						.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+						.permitAll() // resources 접근 허용 설정
+						.requestMatchers("/api/v1/auth/**").permitAll() // TODO 이거 안넣으셔도 됩니다.
+						.requestMatchers(SWAGGER.toArray(new String[0])).permitAll()
+						.anyRequest()
+						//.permitAll()
+						.authenticated()
 		);
 
 		http.exceptionHandling((exception) ->
-			exception.accessDeniedHandler(accessDeniedHandler));
+				exception.accessDeniedHandler(accessDeniedHandler));
 
 		// 필터 관리
 		http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -77,4 +84,6 @@ public class SecurityConfig {
 	}
 
 }
+
+
 
