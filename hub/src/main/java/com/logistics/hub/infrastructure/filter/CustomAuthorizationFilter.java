@@ -32,15 +32,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
 		if(request.getRequestURI().contains("/swagger-ui")
 				|| request.getRequestURI().contains("/v3/api-docs")
-				|| request.getRequestURI().contains("/swagger-ui.html")
-				|| request.getRequestURI().contains("/webjars/swagger-ui")
 		){
-
-			log.info("SWAGGER 들어왔다!!!!!!!");
-
-			log.info("FilterChain 실행 시작");
 			filterChain.doFilter(request, response);
-			log.info("FilterChain 실행 완료");
 			return;
 		}
 

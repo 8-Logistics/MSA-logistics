@@ -39,11 +39,7 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
 
         log.info("path: {}", path);
 
-        if (path.startsWith("/api/v1/auth")) {
-            return chain.filter(exchange);
-        }
-
-        if(path.contains("/swagger-ui") || path.contains("/v3/api-docs")){
+        if (path.startsWith("/api/v1/auth") || path.contains("/swagger-ui") || path.contains("/v3/api-docs")) {
             return chain.filter(exchange);
         }
 

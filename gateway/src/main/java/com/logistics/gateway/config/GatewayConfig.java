@@ -16,6 +16,10 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder, RefreshGatewayFilterFactory filter) {
         return builder.routes()
+                .route("user-service-doc", r -> r
+                        .path("/api/v1/users/v3/api-docs")
+                        .filters(f -> f.rewritePath("/api/v1/users/v3/api-docs", "/v3/api-docs"))
+                        .uri("lb://user-service"))
                 .route("user-service", r -> r.path("/api/v1/auth/refresh")
                         .filters(f -> f.filter(filter.apply(new RefreshGatewayFilterFactory.Config() {{
                             setBaseMessage("[Refresh-Verification]");
