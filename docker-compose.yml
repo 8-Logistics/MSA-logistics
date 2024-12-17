@@ -11,8 +11,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -40,8 +39,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -56,8 +54,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -72,8 +69,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -88,8 +84,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -104,8 +99,7 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -120,11 +114,25 @@ services:
     networks:
       - msa-network
     depends_on:
-      gateway:
-        condition: service_healthy
+      - gateway
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  msa-db:
+    image: mysql:latest
+    container_name: msa-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - msa-network
 
   zipkin:
     image: openzipkin/zipkin:latest
