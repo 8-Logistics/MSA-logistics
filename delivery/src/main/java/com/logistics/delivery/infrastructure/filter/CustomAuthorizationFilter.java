@@ -28,6 +28,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         log.info("path : {}", request.getRequestURI());
 
+
+        // auth, swagger 요청에 대해서는 인증 X
+        if (request.getRequestURI().matches("/api/v1/auth/.*") || request.getRequestURI().contains("/swagger-ui")
+                || request.getRequestURI().contains("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 헤더에서 사용자 정보 추출
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-Role");
@@ -52,3 +60,4 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
