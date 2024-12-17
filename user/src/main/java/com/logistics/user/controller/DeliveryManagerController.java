@@ -3,6 +3,8 @@ package com.logistics.user.controller;
 import com.logistics.user.application.CustomPrincipal;
 import com.logistics.user.application.dto.*;
 import com.logistics.user.application.service.DeliveryManagerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +17,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Delivery-Manager-Service API", description = "배송 담당자 API Controller")
 @RequiredArgsConstructor
 public class DeliveryManagerController {
 
     private final DeliveryManagerService deliveryManagerService;
 
+    @Operation(summary = "배송담당자 생성 API", description = "MASTER, HUB_MANAGER 권한만 NORMAL 권한인 사용자에서 배송담당자로 ")
     // 배송 담당자 생성 API
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @PostMapping("/delivery-manager")
