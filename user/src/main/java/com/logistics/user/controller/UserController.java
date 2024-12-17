@@ -3,6 +3,7 @@ package com.logistics.user.controller;
 import com.logistics.user.application.CustomPrincipal;
 import com.logistics.user.application.dto.*;
 import com.logistics.user.application.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ public class UserController {
      * @param userId
      * @return
      */
+    @Operation(summary = "사용자 단건 조회 API")
     @GetMapping("/users/{userId}")
     public ResponseEntity<?> findUser(@PathVariable("userId") Long userId) {
 
@@ -37,6 +39,7 @@ public class UserController {
      * @param userId
      * @return
      */
+    @Operation(summary = "사용자 삭제 API", description = "MASTER 권한만 가능")
     @PreAuthorize("hasAnyAuthority('MASTER')")
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
@@ -52,6 +55,7 @@ public class UserController {
      * @param request
      * @return
      */
+    @Operation(summary = "사용자 수정 API", description = "MASTER 권한만 가능")
     @PreAuthorize("hasAnyAuthority('MASTER')")
     @PutMapping("/users/{userId}")
     public ResponseEntity<?> modifyUser(@PathVariable("userId") Long userId, @RequestBody UserModifyReqDto request) {
@@ -75,6 +79,7 @@ public class UserController {
     }
 
     // user 검색, 조회 API
+    @Operation(summary = "사용자 검색/조회 API")
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
     @GetMapping("/users/userSearch")
     public ResponseEntity<?> searchUsers(UserSearchReqDto searchRequest,

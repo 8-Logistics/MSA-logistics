@@ -23,7 +23,7 @@ public class DeliveryManagerController {
 
     private final DeliveryManagerService deliveryManagerService;
 
-    @Operation(summary = "배송담당자 생성 API", description = "MASTER, HUB_MANAGER 권한만 NORMAL 권한인 사용자에서 배송담당자로 ")
+    @Operation(summary = "배송담당자 생성 API", description = "MASTER, HUB_MANAGER 권한만 NORMAL 권한인 사용자에서 배송담당자로")
     // 배송 담당자 생성 API
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @PostMapping("/delivery-manager")
@@ -33,6 +33,7 @@ public class DeliveryManagerController {
     }
 
     // 배송 담당자 삭제 API
+    @Operation(summary = "배송담당자 삭제 API", description = "MASTER, HUB_MANAGER 권한만 삭제")
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @DeleteMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<?> deleteDeliveryManager(@PathVariable UUID deliveryManagerId, @AuthenticationPrincipal CustomPrincipal principal){
@@ -41,6 +42,7 @@ public class DeliveryManagerController {
     }
 
     // [Feign] 배송 상태 update API
+    @Operation(summary = "[Feign] 배송 상태 update API", description = "MASTER, DELIVERY_MANAGER 권한만 삭제")
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER')")
     @PutMapping("/delivery-manager/{deliveryManagerId}/updateStatus")
     public void updateDeliveryStatus(@PathVariable UUID deliveryManagerId, @RequestParam("deliveryStatus")
@@ -49,18 +51,21 @@ public class DeliveryManagerController {
     }
 
     // [Feign] 배송 sequence return API
+    @Operation(summary = "[Feign] 배송 sequence return API")
     @GetMapping("/delivery-manager/deliverySequence")
     public DeliverySequenceDto getDeliverySequence(@RequestParam(value = "hubId", required = false) UUID hubId){
         return deliveryManagerService.getDeliverySequence(hubId);
     }
 
     // [Feign] order 배송담당자 UUID로 userId return API
+    @Operation(summary = "[Feign] Order 배송담당자 userID return API", description = "order Feign 배송담당자 UUID로 userID return")
     @GetMapping("/delivery-manager/{deliveryManagerId}/order")
     public ResponseEntity<String> getOrderUserId(@PathVariable UUID deliveryManagerId){
         return ResponseEntity.ok(deliveryManagerService.getDeliveryManagerUserId(deliveryManagerId));
     }
 
     // 배송 담당자 단건 조회 API
+    @Operation(summary = "배송담당자 단건 조회 API")
     @PreAuthorize("hasAnyAuthority('MASTER','DELIVERY_MANAGER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<?> getDeliveryManager(@PathVariable UUID deliveryManagerId){
@@ -71,6 +76,7 @@ public class DeliveryManagerController {
     }
 
     // 배송담당자 수정 API
+    @Operation(summary = "배송담당자 수정 API", description = "MASTER, HUB_MANAGER(자신의 허브)만 수정 가능 ")
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @PutMapping("/delivery-manager/{deliveryManagerId}")
     public ResponseEntity<?> modifyDeliveryManager(@PathVariable UUID deliveryManagerId, @RequestBody DeliveryManagerUpdateReqDto request,
@@ -83,6 +89,7 @@ public class DeliveryManagerController {
     }
 
     // 배송 담당자 조회 API
+    @Operation(summary = "배송담당자 검색/조회 API", description = "MASTER, HUB_MANAGER 권한만 가능")
     @PreAuthorize("hasAnyAuthority('MASTER', 'HUB_MANAGER')")
     @GetMapping("/delivery-manager/search")
     public ResponseEntity<?>
