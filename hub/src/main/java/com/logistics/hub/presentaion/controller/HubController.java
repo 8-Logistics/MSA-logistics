@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Hub-service API")
+@Tag(name = "Hub-service API", description = "Hub API Controller")
 @RequestMapping("/api/v1")
 public class HubController {
 	private final HubService hubService;

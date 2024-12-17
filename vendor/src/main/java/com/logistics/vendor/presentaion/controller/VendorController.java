@@ -25,6 +25,8 @@ import com.logistics.vendor.application.service.CustomPrincipal;
 import com.logistics.vendor.application.service.VendorService;
 import com.logistics.vendor.domain.enums.SortOption;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "Vendor-Service API", description = "업체 API Controller")
 public class VendorController {
 	private final VendorService vendorService;
 
+	@Operation(summary = "업체 생성 ")
 	@PreAuthorize("hasAnyAuthority('MASTER','HUB_MANAGER')")
 	@PostMapping("/vendors")
 	public ResponseEntity<VendorCreateResDTO> createVendor(
@@ -42,6 +46,7 @@ public class VendorController {
 		return ResponseEntity.ok(vendorService.createVendor(request));
 	}
 
+	@Operation(summary = "업체 수정 ")
 	@PreAuthorize("hasAnyAuthority('MASTER','HUB_MANAGER','VENDOR_MANAGER')")
 	@PutMapping("/vendors/{vendorId}")
 	public ResponseEntity<VendorUpdateResDTO> updateVendor(
@@ -50,6 +55,7 @@ public class VendorController {
 		return ResponseEntity.ok(vendorService.updateVendor(request, vendorId));
 	}
 
+	@Operation(summary = "업체 담당매니저 등록(변경) ")
 	@PreAuthorize("hasAnyAuthority('MASTER','HUB_MANAGER')")
 	@PutMapping("/vendors/{vendorId}/manager")
 	public ResponseEntity<String> assignVendorManager(
@@ -59,6 +65,7 @@ public class VendorController {
 		return ResponseEntity.ok("Assigned manager to Vendor Successful");
 	}
 
+	@Operation(summary = "업체 삭제 ")
 	@PreAuthorize("hasAnyAuthority('MASTER','HUB_MANAGER')")
 	@DeleteMapping("/vendors/{vendorId}")
 	public ResponseEntity<String> deleteVendor(
@@ -68,12 +75,14 @@ public class VendorController {
 		return ResponseEntity.ok("Vendor successfully deleted");
 	}
 
+	@Operation(summary = "업체 단건 조회 ")
 	@GetMapping("/vendors/{vendorId}")
 	public ResponseEntity<VendorReadResDTO> getVendor(
 		@PathVariable(name = "vendorId") UUID vendorId) {
 		return ResponseEntity.ok(VendorReadResDTO.of(vendorService.getVendor(vendorId)));
 	}
 
+	@Operation(summary = "업체 검색 조회 ")
 	@GetMapping("/vendors")
 	public ResponseEntity<Page<VendorReadResDTO>> searchVendors(
 		@RequestParam(value = "page", defaultValue = "1") int page,
@@ -84,12 +93,14 @@ public class VendorController {
 		return ResponseEntity.ok(vendorService.searchVendors(vendorId, page - 1, size, keyword, sortOption));
 	}
 
+	@Operation(summary = "업체 주소 조회 ")
 	@GetMapping("/vendors/{vendorId}/address")
 	public ResponseEntity<String> getVendorAddress(
 		@PathVariable(name = "vendorId") UUID vendorId) {
 		return ResponseEntity.ok(vendorService.getVendorAddress(vendorId));
 	}
 
+	@Operation(summary = "업체 삭제여부 확인 ")
 	@GetMapping("/vendors/vendor/{vendorId}")
 	public boolean checkVendor(@PathVariable(name="vendorId") UUID vendorId) {
 		return vendorService.checkVendor(vendorId);

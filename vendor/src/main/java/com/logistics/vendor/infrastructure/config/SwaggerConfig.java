@@ -1,10 +1,9 @@
 package com.logistics.vendor.infrastructure.config;
 
+import java.util.Arrays;
 
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -15,38 +14,31 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @OpenAPIDefinition(
-	servers = {
-		@Server(url = "http://localhost:19091", description = "Local")
-	}
+        servers = {
+                @Server(url = "http://localhost:19091", description = "Local")
+        }
 )
 @Configuration
 public class SwaggerConfig {
 
-	@Bean
-	public GroupedOpenApi publicApi() {
-		return GroupedOpenApi.builder()
-			.group("v1")
-			.pathsToMatch("/**")
-			.build();
-	}
+    @Bean
+    public OpenAPI openAPI() {
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER).name("Authorization");
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
-	@Bean
-	public OpenAPI springShopOpenAPI() {
-		Components components = new Components()
-			.addSecuritySchemes(HttpHeaders.AUTHORIZATION, new SecurityScheme()
-				.name(HttpHeaders.AUTHORIZATION)
-				.type(SecurityScheme.Type.APIKEY)
-				.in(SecurityScheme.In.HEADER)
-				.bearerFormat("JWT"));
-
-		return new OpenAPI()
-			.info(new Info()
-				.title("8조")
-				.description("대규모 AI 시스템 설계 프로젝트 REST API")
-				.version("v1"))
-			.addSecurityItem(new SecurityRequirement()
-				.addList(HttpHeaders.AUTHORIZATION))
-			.components(components);
-	}
-
+        return new OpenAPI()
+                .info(new Info()
+                        .title("8-logistics")
+                        .description("대규모 AI 물류 시스템 설계 프로젝트 REST API")
+                        .version("v1"))
+                .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+                .security(Arrays.asList(securityRequirement))
+                .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("/"));
+    }
 }
+
+
+
+

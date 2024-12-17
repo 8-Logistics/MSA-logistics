@@ -1,5 +1,7 @@
 package com.logistics.vendor.infrastructure.filter;
 
+import static com.logistics.vendor.application.service.CustomPrincipal.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +30,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
 		log.info("path : {}", request.getRequestURI());
 
-		// TODO 이거 안넣으셔도 됩니다.
-		// auth 요청에 대해서는 인증 X
-		if (request.getRequestURI().matches("/api/v1/auth/.*")) {
+		if(request.getRequestURI().contains("/swagger-ui")
+			|| request.getRequestURI().contains("/v3/api-docs")
+		){
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -45,7 +47,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		CustomPrincipal principal = CustomPrincipal.createPrinciple(userId, role);
+		CustomPrincipal principal = createPrinciple(userId, role);
 
 		// 인증 정보 설정
 		List<SimpleGrantedAuthority> authorities = Arrays.stream(role.split(","))
