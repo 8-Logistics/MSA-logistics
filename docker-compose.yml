@@ -87,6 +87,7 @@ services:
       - msa-network
     depends_on:
       - gateway
+      - redis
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -102,6 +103,7 @@ services:
       - msa-network
     depends_on:
       - gateway
+      - redis
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -148,7 +150,9 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"
+      - "6389:6379"
+    networks:
+      - msa-network
 
 networks:
   msa-network:
