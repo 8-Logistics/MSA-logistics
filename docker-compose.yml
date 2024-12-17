@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - "19091:19091"
+    networks:
+      - msa-network
+    depends_on:
+      - server
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    ports:
+      - "19090:19090"
+    networks:
+      - msa-network
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  order-service:
+    build:
+      context: ./order
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "18084:18084"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  product-service:
+    build:
+      context: ./product
+      dockerfile: Dockerfile
+    container_name: product-service
+    ports:
+      - "18083:18083"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  delivery-service:
+    build:
+      context: ./delivery
+      dockerfile: Dockerfile
+    container_name: delivery-service
+    ports:
+      - "18085:18085"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "18080:18080"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  hub-service:
+    build:
+      context: ./hub
+      dockerfile: Dockerfile
+    container_name: hub-service
+    ports:
+      - "18082:18082"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  vendor-service:
+    build:
+      context: ./vendor
+      dockerfile: Dockerfile
+    container_name: vendor-service
+    ports:
+      - "18081:18081"
+    networks:
+      - msa-network
+    depends_on:
+      - gateway
+    environment:
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - msa-network
+
+networks:
+  msa-network:
+    driver: bridge
