@@ -11,7 +11,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -39,7 +40,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -54,7 +56,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -69,7 +72,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -84,7 +88,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -99,7 +104,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
@@ -114,7 +120,8 @@ services:
     networks:
       - msa-network
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     environment:
       - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
