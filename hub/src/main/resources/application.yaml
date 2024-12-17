@@ -5,17 +5,16 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    url: jdbc:mysql://localhost:3306/8logistics
-    username: sunghun
-    password: 12345
+    url: jdbc:mysql://msa-db:3306/hub_db
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
       username: default
-      password: systempass
 
   jpa:
     hibernate:
@@ -38,7 +37,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://server:19090/eureka/
 
 
 springdoc:
