@@ -1,8 +1,10 @@
 package com.logistics.delivery.infrastructure.config;
 
 
-import com.logistics.delivery.infrastructure.filter.CustomAuthorizationFilter;
-import lombok.RequiredArgsConstructor;
+import java.util.Collections;
+import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.List;
+import com.logistics.delivery.infrastructure.filter.CustomAuthorizationFilter;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -24,13 +31,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final com.logistics.delivery.infrastructure.config.CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     // SWAGGER는 들어 갈 수 있게 제외한다.
     private final List<String> SWAGGER = List.of(
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/**"
     );
 
     @Bean
@@ -61,7 +68,7 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/api/v1/auth/**").permitAll() // TODO 이거 안넣으셔도 됩니다.
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(SWAGGER.toArray(new String[0])).permitAll()
                         .anyRequest().authenticated()
         );
@@ -76,4 +83,5 @@ public class SecurityConfig {
     }
 
 }
+
 
