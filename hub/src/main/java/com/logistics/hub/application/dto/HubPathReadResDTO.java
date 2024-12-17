@@ -47,7 +47,7 @@ public class HubPathReadResDTO {
 			.destinationHubId(hubPath.getDestinationHub().getId())
 			.distance(hubPath.getDistance())
 			.estimatedTime(hubPath.getEstimatedTime())
-			.createdAt(LocalDateTime.now())
+			.createdAt(hubPath.getCreatedAt())
 			.build();
 	}
 }
