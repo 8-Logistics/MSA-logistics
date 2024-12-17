@@ -31,12 +31,6 @@ public class GatewayConfig {
                         .or().path("/api/v1/users/**")
                         .or().path("/api/v1/delivery-manager/**")
                         .uri("lb://user-service"))
-//                .route("product-service-doc", r -> r
-//                        .path("/api/v1/products/v3/api-docs")
-//                        .filters(f -> f.rewritePath("/api/v1/products/v3/api-docs", "/v3/api-docs"))
-//                        .uri("lb://product-service"))
-//                .route("product-service", r -> r.path("/api/v1/products/**")
-//                        .uri("lb://product-service"))
                 .build();
     }
 }
