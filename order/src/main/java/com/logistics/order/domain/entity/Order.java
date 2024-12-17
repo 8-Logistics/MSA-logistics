@@ -40,8 +40,9 @@ public class Order extends BaseEntity {
     @Column
     private String pickupRequest;
 
-    public Order createOrder(Order order, OrderProductResDto orderProductResDto, String userId, OrderDeliveryResDto orderDeliveryResDto) {
+    public Order createOrder(UUID orderId, Order order, OrderProductResDto orderProductResDto, String userId, OrderDeliveryResDto orderDeliveryResDto) {
         return Order.builder()
+                .orderId(orderId)
                 .deliveryId(orderDeliveryResDto.getDeliveryId())
                 .providerVendorId(orderProductResDto.getProductVendorId())
                 .receiveVendorId(order.getReceiveVendorId())

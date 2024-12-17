@@ -46,7 +46,7 @@ public class DeliveryManagerController {
 
     // [Feign] 배송 sequence return API
     @GetMapping("/delivery-manager/deliverySequence")
-    public DeliverySequenceDto getDeliverySequence(@RequestParam("hubId") UUID hubId){
+    public DeliverySequenceDto getDeliverySequence(@RequestParam(value = "hubId", required = false) UUID hubId){
         return deliveryManagerService.getDeliverySequence(hubId);
     }
 

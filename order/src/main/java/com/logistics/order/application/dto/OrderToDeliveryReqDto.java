@@ -20,12 +20,12 @@ public class OrderToDeliveryReqDto {
     private String userName;
     private String slackId;
 
-    public static OrderToDeliveryReqDto from(OrderProductResDto productDto,
+    public static OrderToDeliveryReqDto from(UUID vendorId, OrderProductResDto productDto,
                                              String productVendorAddress, OrderUserResDto userDto) {
         return new OrderToDeliveryReqDto(
                 UUID.randomUUID(),
                 productDto.getProductSourceHubId(),
-                productDto.getProductVendorId(),
+                vendorId,
                 productVendorAddress,
                 userDto.getName(),
                 userDto.getSlackId()

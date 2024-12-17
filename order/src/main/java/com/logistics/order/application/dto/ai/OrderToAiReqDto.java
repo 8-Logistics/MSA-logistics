@@ -38,7 +38,7 @@ public class OrderToAiReqDto {
                 .pickupRequest(order.getPickupRequest())
                 .sourceHubAddress(orderDeliveryResDto.getSourceHubAddress())
                 .productVendorAddress(productVendorAddress)
-                .deliveryManagerName(deliveryUserResDto.getUserName())
+                .deliveryManagerName(deliveryUserResDto.getName())
                 .deliveryManagerEmail(deliveryUserResDto.getEmail())
                 .deliveryManagerSlackId(orderUserDto.getSlackId())
                 .build();

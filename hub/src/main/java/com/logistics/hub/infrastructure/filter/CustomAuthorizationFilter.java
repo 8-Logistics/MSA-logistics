@@ -30,10 +30,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
 		log.info("path : {}", request.getRequestURI());
 
-		// TODO 이거 안넣으셔도 됩니다.
-		// auth 요청에 대해서는 인증 X
-		if (request.getRequestURI().matches("/api/v1/auth/.*")) {
+		if(request.getRequestURI().contains("/swagger-ui")
+				|| request.getRequestURI().contains("/v3/api-docs")
+				|| request.getRequestURI().contains("/swagger-ui.html")
+				|| request.getRequestURI().contains("/webjars/swagger-ui")
+		){
+
+			log.info("SWAGGER 들어왔다!!!!!!!");
+
+			log.info("FilterChain 실행 시작");
 			filterChain.doFilter(request, response);
+			log.info("FilterChain 실행 완료");
 			return;
 		}
 
