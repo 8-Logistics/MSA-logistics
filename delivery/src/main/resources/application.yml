@@ -3,9 +3,9 @@ spring:
     name: delivery-service
 
   datasource:
-    url: ${SPRING.DATABASE.URL}
-    username: ${SPRING.DATABASE.USERNAME}
-    password: ${SPRING.DATABASE.PASSWORD}
+    url: jdbc:mysql://msa-db:3306/delivery_db
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -25,4 +25,13 @@ service:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://server:19090/eureka/
+
+
+management:
+  zipkin:
+    tracing:
+      endpoint: "http://zipkin:9411/api/v2/spans"
+  tracing:
+    sampling:
+      probability: 1.0
