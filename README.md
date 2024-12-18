@@ -10,7 +10,7 @@
 
 ## 🧑🏻‍💻 팀원 역할 분담
 - **민지수** : product-service, order-service(Slack, Gemini) 
-- **김성훈** : gateway, user-service
+- **김성훈** : gateway, user-service (Security 구축, refreshToken & redis, Auditing)
 - **서연주** : Hub-service, vendor-service
 - **박강현** : Delivery-service
 
